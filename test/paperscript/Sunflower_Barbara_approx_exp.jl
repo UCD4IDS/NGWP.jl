@@ -1,4 +1,4 @@
-using NGWP, JLD, MAT, Plots, LightGraphs
+using NGWP, JLD, MAT, Plots, LightGraphs, MTSG
 gr(dpi = 200)
 
 ## Build weighted sunflower graph
