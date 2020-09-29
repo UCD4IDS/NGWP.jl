@@ -6,3 +6,16 @@
 [![Coverage](https://coveralls.io/repos/github/haotian127/NGWP.jl/badge.svg?branch=master)](https://coveralls.io/github/haotian127/NGWP.jl?branch=master)
 
 This is the repository for the [Natural Graph Wavelet Packet Dictionaries](https://arxiv.org/abs/2009.09020).
+
+## SETUP
+
+To install the NGWP.jl (Natural Graph Wavelet Packets), run
+```julia
+]
+(v1.0) pkg> add https://github.com/haotian127/NGWP.jl.git
+using NGWP
+```
+
+## GETTING STARTED
+
+### ```] test NGWP```
