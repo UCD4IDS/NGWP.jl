@@ -2,7 +2,7 @@ __precompile__()
 
 module NGWP
 
-using LinearAlgebra, SparseArrays, LightGraphs, SimpleWeightedGraphs, Clustering, JuMP, Clp, Optim, OptimalTransport, MTSG
+using LinearAlgebra, SparseArrays, LightGraphs, SimpleWeightedGraphs, Clustering, JuMP, Clp, Optim, OptimalTransport
 
 filenames = readdir(@__DIR__)
 
@@ -14,6 +14,6 @@ for f in filenames
     end
 end
 
-export SunFlowerGraph, dualGraph, HTree_EVlist, HTree_wavelet_packet, HTree_wavelet_packet_varimax, scatter_gplot, scatter_gplot!, signal_transform_coeff, approx_error_plot2, HTree_findParent, best_basis_selection, eigDAG_Distance
+export SunFlowerGraph, dualGraph, HTree_EVlist, HTree_wavelet_packet, HTree_wavelet_packet_varimax, scatter_gplot, scatter_gplot!, signal_transform_coeff, approx_error_plot2, HTree_findParent, best_basis_selection, eigDAG_Distance, eigHAD_Distance, eigROT_Distance, eigTSD_Distance, spike, characteristic
 
 end
