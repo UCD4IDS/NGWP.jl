@@ -1,3 +1,4 @@
+println("Loading NGWP...")
 using NGWP
 using Test, JLD, MAT, Plots, LightGraphs, LinearAlgebra, SparseArrays
 
