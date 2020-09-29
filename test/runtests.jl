@@ -4,6 +4,7 @@ using Test, JLD, MAT, Plots, LightGraphs, LinearAlgebra, SparseArrays
 #####################################################
 # 1. Testing PC-NGWP and VM-NGWP on sunflower graph #
 #####################################################
+println("Testing NGWP on sunflower barbara eye signal")
 ## Build weighted sunflower graph for test
 G, L, X = SunFlowerGraph(N = 400); N = nv(G)
 lamb, 𝛷 = eigen(Matrix(L)); sgn = (maximum(𝛷, dims = 1)[:] .> -minimum(𝛷, dims = 1)[:]) .* 2 .- 1; 𝛷 = Matrix((𝛷' .* sgn)')
