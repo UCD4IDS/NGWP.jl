@@ -13,9 +13,6 @@ To install the NGWP.jl (Natural Graph Wavelet Packets), run
 ```julia
 ]
 (v1.0) pkg> add https://github.com/haotian127/NGWP.jl.git
+(v1.0) pkg> test NGWP
 using NGWP
 ```
-
-## GETTING STARTED
-
-### ```] test NGWP```
