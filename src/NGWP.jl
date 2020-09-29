@@ -3,7 +3,7 @@ __precompile__()
 module NGWP
 
 using LinearAlgebra, SparseArrays, LightGraphs, SimpleWeightedGraphs, Clustering, JuMP, Clp, Optim, OptimalTransport, MTSG
-import Plots.scatter
+import Plots.scatter, Plots.scatter!
 
 filenames = readdir(@__DIR__)
 
