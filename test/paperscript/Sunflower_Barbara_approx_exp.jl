@@ -1,3 +1,7 @@
+## Set up environment and load required packages
+using Pkg
+Pkg.activate(".")
+
 using NGWP, JLD, MAT, Plots, LightGraphs, MTSG
 gr(dpi = 200)
 
