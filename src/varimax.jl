@@ -8,7 +8,7 @@ VARIMAX perform varimax (or quartimax, equamax, parsimax) rotation to the column
 - `gamma::Float64`: default is 1. gamma = 0, 1, m/2, and d(m - 1)/(d + m - 2), corresponding to quartimax, varimax, equamax, and parsimax.
 - `minit::Int`: default is 20. Minimum number of iterations, in case of the stopping criteria fails initially.
 - `maxit::Int`: default is 1000. Maximum number of iterations.
-- `reltol::Float 64`: default is 1e-14. Relative tolerance for stopping criteria.
+- `reltol::Float64`: default is 1e-12. Relative tolerance for stopping criteria.
 
 # Output Argument
 - `B::Matrix{Float64}`: output matrix, whose columns are already been rotated.
