@@ -1,5 +1,5 @@
 """
-	varimax(A; gamma = 1.0, minit = 50, maxit = 1000, reltol = 1e-14)
+	varimax(A; gamma = 1.0, minit = 20, maxit = 1000, reltol = 1e-12)
 
 VARIMAX perform varimax (or quartimax, equamax, parsimax) rotation to the column vectors of the input matrix.
 
