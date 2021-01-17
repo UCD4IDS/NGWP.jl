@@ -20,8 +20,8 @@ using NGWP
 
 ## EXAMPLE
 
-For basic usage, see `test/paperscript`.
+See `test/paperscript`.
 
 ## REFERENCE
 
-C. Alexander, H. Li and N. Saito, [Natural Graph Wavelet Packet Dictionaries](https://arxiv.org/abs/2009.09020), 2020.
+C. Alexander, H. Li and N. Saito, [Natural Graph Wavelet Packet Dictionaries](https://arxiv.org/abs/2009.09020).
