@@ -29,8 +29,8 @@ f = matread(joinpath(@__DIR__, "datasets", "sunflower_barbara.mat"))["f_eye"]
 DVEC = signal_transform_coeff(f, ht_elist_dual, ht_elist_varimax, wavelet_packet_dual, wavelet_packet_varimax, 𝛷, W, X)
 
 DVEC_truth = JLD.load(joinpath(@__DIR__, "datasets", "sunflower_barbara_feye_DVEC.jld"), "DVEC")
-dvec_PC_NGWP_truth = DVEC_truth[8]
-dvec_VM_NGWP_truth = DVEC_truth[9]
+dvec_PC_NGWP_truth = DVEC_truth[7]
+dvec_VM_NGWP_truth = DVEC_truth[8]
 
 @testset "PC-NGWP Test" begin
     @test norm(DVEC[8]-dvec_PC_NGWP_truth)/norm(dvec_PC_NGWP_truth) < 1e-8
