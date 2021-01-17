@@ -204,9 +204,8 @@ end
 ### function to plot the approximation error curve
 function approx_error_plot2(DVEC::Array{Array{Float64,1},1}; frac = 0.50)
     plot(xaxis = "Fraction of Coefficients Retained", yaxis = "Relative Approximation Error")
-    T = ["Haar", "Walsh", "Laplacian", "GHWT_c2f", "GHWT_f2c", "eGHWT", "PC-NGWP", "VM-NGWP"]
-    L = [(:dashdot,:orange), (:dashdot,:pink), (:dashdot, :red), (:solid, :gray), (:solid, :green), (:solid, :blue), (:solid, :purple), (:solid, :black)]
-    LW = [2, 2, 2, 2, 2, 2, 2, 2]
+    T = ["Laplacian", "HGLET", "Haar", "Walsh",  "GHWT_c2f", "GHWT_f2c", "eGHWT", "PC-NGWP", "VM-NGWP"]
+    L = [(:dashdot,:red), (:solid,:brown), (:dashdot,:orange), (:dashdot,:pink), (:solid,:gray), (:solid,:green), (:solid,:blue), (:solid,:purple), (:solid,:black)]
     for i = 1:length(DVEC)
         dvec = DVEC[i]
         N = length(dvec)
@@ -214,7 +213,7 @@ function approx_error_plot2(DVEC::Array{Array{Float64,1},1}; frac = 0.50)
         dvec_sort = sort(dvec.^2) # the smallest first
         er = max.(sqrt.(reverse(cumsum(dvec_sort)))/dvec_norm, 1e-12) # this is the relative L^2 error of the whole thing, i.e., its length is N
         p = Int64(floor(frac*N)) + 1 # upper limit
-        plot!(frac*(0:(p-1))/(p-1), er[1:p], yaxis=:log, xlims = (0.,frac), label = T[i], line = L[i], linewidth = LW[i], grid = false)
+        plot!(frac*(0:(p-1))/(p-1), er[1:p], yaxis=:log, xlims = (0.,frac), label = T[i], line = L[i], linewidth = 2, grid = false)
     end
 end
 
@@ -234,6 +233,9 @@ function signal_transform_coeff(f, ht_elist_dual, ht_elist_varimax, wavelet_pack
     tmp=zeros(length(f),1); tmp[:,1]=f; G_Sig=GraphSig(1.0*W, xy=X, f=tmp)
     G_Sig = Adj2InvEuc(G_Sig)
     GP = partition_tree_fiedler(G_Sig,:Lrw)
+    dmatrixH, dmatrixHrw, dmatrixHsym = HGLET_Analysis_All(G_Sig, GP) # expansion coefficients of 3-way HGLET bases
+    dvec_hglet, BS_hglet, trans_hglet = HGLET_GHWT_BestBasis(GP, dmatrixH = dmatrixH, dmatrixHrw = dmatrixHrw, dmatrixHsym = dmatrixHsym, costfun = 1) # best-basis among all combinations of bases
+
     dmatrix = ghwt_analysis!(G_Sig, GP=GP)
     ############# Haar
     BS_haar = bs_haar(GP)
@@ -247,7 +249,7 @@ function signal_transform_coeff(f, ht_elist_dual, ht_elist_varimax, wavelet_pack
     dvec_f2c, BS_f2c = ghwt_f2c_bestbasis(dmatrix, GP)
     ############# eGHWT
     dvec_eghwt, BS_eghwt = ghwt_tf_bestbasis(dmatrix, GP)
-    DVEC = [dvec_haar[:], dvec_walsh[:], dvec_Laplacian[:], dvec_c2f[:], dvec_f2c[:], dvec_eghwt[:], dvec_spectral[:], dvec_varimax[:]]
+    DVEC = [dvec_Laplacian[:], dvec_hglet[:], dvec_haar[:], dvec_walsh[:], dvec_c2f[:], dvec_f2c[:], dvec_eghwt[:], dvec_spectral[:], dvec_varimax[:]]
     return DVEC
 end
 
@@ -511,4 +513,38 @@ COMPUTE\\_SNR, g = f + ϵ, SNR = 20 * log10(norm(f)/norm(g-f)).
 function compute_SNR(f, g)
     SNR = 20 * log10(norm(f)/norm(g-f))
     return SNR
+end
+
+"""
+    sort_wavelets(A)
+
+SORT\\_WAVELETS, sort A's column wavelet vectors based on their focused location on Path.
+
+# Input Arguments
+- `A::Matrix{Float64}`: whose column vectors are wavelets.
+
+# Output Argument
+- `A::Matrix{Float64}`: a matrix with sorted column.
+"""
+function sort_wavelets(A; order_by_loc = true)
+    # sgn = (maximum(A, dims = 1)[:] .> -minimum(A, dims = 1)[:]) .* 2 .- 1
+    # A = (A' .* sgn)'
+
+    if order_by_loc
+        ord = findmax(abs.(A), dims = 1)[2][:]
+        idx = sortperm([j[1] for j in ord])
+        A = A[:,idx]
+    end
+
+    N = size(A,1)
+    sgn = ones(size(A,2))
+    mid = Int(round(size(A,2)/2))
+    for i in 1:size(A,2)
+        cor_res = crosscor(A[:,mid], A[:,i], -Int(ceil(N/2)):Int(floor(N/2)))
+        if maximum(cor_res) < -minimum(cor_res)
+            sgn[i] = -1
+        end
+    end
+    A = A * Diagonal(sgn)
+    return A
 end
