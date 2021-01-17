@@ -42,9 +42,8 @@ for i = 2:10
 end
 
 ## Show some important HGLET vectors
-using MTSG
-tmp=zeros(length(f),1); tmp[:,1]=f; G_Sig=GraphSig(1.0*W, xy=X, f=tmp)
-G_Sig = Adj2InvEuc(G_Sig); GP = partition_tree_fiedler(G_Sig,:Lrw)
+G_Sig = GraphSig(1.0*W, xy=X, f=reshape(f, (N,1))); G_Sig = Adj2InvEuc(G_Sig);
+GP = partition_tree_fiedler(G_Sig,:Lrw)
 dmatrixH, dmatrixHrw, dmatrixHsym = HGLET_Analysis_All(G_Sig, GP) # expansion coefficients of 3-way HGLET bases
 dvec_hglet, BS_hglet, trans_hglet = HGLET_GHWT_BestBasis(GP, dmatrixH = dmatrixH, dmatrixHrw = dmatrixHrw, dmatrixHsym = dmatrixHsym, costfun = 1) # best-basis among all combinations of bases
 importance_idx = sortperm(dvec_hglet.^2; rev = true)[1:10]
