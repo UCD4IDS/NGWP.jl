@@ -42,3 +42,13 @@ function dualBinaryTree(ptr, N)
     end
     return X, BT, node_ind, hv
 end
+
+function find_deepest_leaf(node, ptr)
+    jmax = length(ptr)
+    j, k = node
+    while j <= jmax
+        k = ptr[j][k][1]
+        j += 1
+    end
+    return [j, k]
+end
