@@ -17,7 +17,7 @@ function eigDAG_Distance(V,Q,numEigs; edge_weight = 1)
     dis = zeros(numEigs,numEigs)
     abs_∇V = abs.(Q' * V)
     for i = 1:numEigs, j = i+1:numEigs
-        dis[i,j] = (edge_weight == 1) ? norm(abs_∇V[:,i]-abs_∇V[:,j],2) : sqrt(sum((abs_∇V[:,i]-abs_∇V[:,j]).^2 .* sqrt.(edge_weight)))
+        dis[i,j] = (edge_weight == 1) ? norm(abs_∇V[:,i]-abs_∇V[:,j],2) : norm((abs_∇V[:,i]-abs_∇V[:,j]).*sqrt.(edge_weight),2)
     end
     return dis + dis'
 end
@@ -26,7 +26,7 @@ function eigDAG_Distance_normalized(V,Q,numEigs; edge_weight = 1)
     dis = zeros(numEigs,numEigs)
     abs_∇V = abs.(Q' * V)
     for i = 1:numEigs, j = i+1:numEigs
-        dis[i,j] = (edge_weight == 1) ? norm(abs_∇V[:,i]-abs_∇V[:,j],2) : sqrt(sum((abs_∇V[:,i]-abs_∇V[:,j]).^2 .* sqrt.(edge_weight)))
+        dis[i,j] = (edge_weight == 1) ? norm(abs_∇V[:,i]-abs_∇V[:,j],2) : norm((abs_∇V[:,i]-abs_∇V[:,j]).*sqrt.(edge_weight),2)
         dis[i,j] /= norm(V[:,i] .* V[:,j],2)
     end
     return dis + dis'
