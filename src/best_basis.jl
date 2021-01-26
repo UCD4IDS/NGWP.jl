@@ -63,6 +63,34 @@ function best_basis_algorithm(ht_coeff_L1, parent)
     return dvec
 end
 
+"""
+    best_basis_selected_subspaces(f, wavelet_packet, ht_elist)
+Find best basis selected subspaces V^{⋆ (j)}_k. The resulting subspaces, i.e. (j+1,k+1)s, are ordered from the left of the binary tree to the right.
+"""
+function best_basis_selected_subspaces(f, wavelet_packet, ht_elist)
+    parent_pointer = HTree_findParent(ht_elist)
+    ht_coeff_L1 = HTree_coeff_wavelet_packet(f,wavelet_packet)[2]
+    subspace_locs = best_basis_algorithm(ht_coeff_L1, parent_pointer)
+    return subspace_locs
+end
+
+"""
+    NGWP_jkl(f, wavelet_packet, ht_elist)
+Find the best basis corresponding (j,k,l).
+"""
+function NGWP_jkl(f, wavelet_packet, ht_elist)
+    bb_locs = best_basis_selected_subspaces(f, wavelet_packet, ht_elist)
+    ind2jkl = (Tuple{Int64,Int64,Int64})[]
+    for i in 1:length(bb_locs)
+        j = bb_locs[i][1]-1
+        k = bb_locs[i][2]-1
+        for l in 1:length(ht_elist[j][k+1])
+            push!(ind2jkl, (j,k,l-1))
+        end
+    end
+    return ind2jkl
+end
+
 function compute_subspace_cost(dvec,arr,ht_coeff_L1)
     s = 0
     for ele in dvec[arr]
