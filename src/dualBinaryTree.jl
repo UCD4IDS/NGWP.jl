@@ -30,13 +30,13 @@ function dualBinaryTree(ptr, N)
             c1 = ptr[j][i][1]
             add_edge!(BT, Edge(node_ind[j][i], node_ind[j+1][c1]))
             X[node_ind[j+1][c1],:] = X[node_ind[j][i],:] + [0,1]
-            hv[node_ind[j+1][c1]] = "($(j),$(c1))"
+            hv[node_ind[j+1][c1]] = "($(j),$(c1-1))"
             if length(ptr[j][i]) == 2
                 c2 = ptr[j][i][2]
                 add_edge!(BT, Edge(node_ind[j][i], node_ind[j+1][c2]))
                 X[node_ind[j+1][c1],:] = X[node_ind[j][i],:] + [-2^(jmax-j),1]
                 X[node_ind[j+1][c2],:] = X[node_ind[j][i],:] + [2^(jmax-j),1]
-                hv[node_ind[j+1][c2]] = "($(j),$(c2))"
+                hv[node_ind[j+1][c2]] = "($(j),$(c2-1))"
             end
         end
     end
