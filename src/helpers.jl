@@ -106,35 +106,55 @@ SCATTER\\_GPLOT!(X; ...) adds a plot to `current` one.
 - `X::Matrix{Float64}`: points locations, can be 2-dim or 3-dim.
 - `marker::Array{Float64}`: default is nothing. Present different colors given different signal value at each node.
 - `ms::Array{Float64}`: default is 4. Present different node sizes given different signal value at each node.
+- `plotOrder::Symbol`: default is normal. Optional choices :s2l or :l2s, i.e., plots from the smallest value of `marker` to the largest value or the other way around.
+- `c::Symbol`: default is :viridis. Colors.
 
 """
-function scatter_gplot(X; marker = nothing, ms = 4, smallValFirst = true, c = :viridis)
+function scatter_gplot(X; marker = nothing, ms = 4, plotOrder = :normal, c = :viridis)
     dim = size(X,2)
-    if marker != nothing && smallValFirst
-        idx = sortperm(marker)
+    if marker != nothing && plotOrder != :normal
+        if plotOrder == :s2l
+            idx = sortperm(marker)
+        elseif plotOrder == :l2s
+            idx = sortperm(marker, rev=true)
+        else
+            print("Error: plotOrder only supports for :normal, :s2l, or :l2s.")
+        end
         X = X[idx,:]
         marker = marker[idx]
+        if length(ms) > 1
+            ms = ms[idx]
+        end
     end
     if dim == 2
-        scatter(X[:,1],X[:,2],marker_z = marker,ms = ms, c = c, legend = false, mswidth = 0, cbar = true, aspect_ratio = 1)
+        scatter(X[:,1],X[:,2], marker_z = marker, ms = ms, c = c, legend = false, mswidth = 0, cbar = true, aspect_ratio = 1, grid = false)
     elseif dim == 3
-        scatter(X[:,1],X[:,2],X[:,3], marker_z = marker, ms = ms, c = c, legend = false, mswidth = 0, cbar = true, aspect_ratio = 1)
+        scatter(X[:,1],X[:,2],X[:,3], marker_z = marker, ms = ms, c = c, legend = false, mswidth = 0, cbar = true, aspect_ratio = 1, grid = false)
     else
         print("Dimension Error: scatter_gplot only supports for 2-dim or 3-dim scatter plots.")
     end
 end
 
-function scatter_gplot!(X; marker = nothing, ms = 4, smallValFirst = true, c = :viridis)
+function scatter_gplot!(X; marker = nothing, ms = 4, plotOrder = :normal, c = :viridis)
     dim = size(X,2)
-    if marker != nothing && smallValFirst
-        idx = sortperm(marker)
+    if marker != nothing && plotOrder != :normal
+        if plotOrder == :s2l
+            idx = sortperm(marker)
+        elseif plotOrder == :l2s
+            idx = sortperm(marker, rev=true)
+        else
+            print("Error: plotOrder only supports for :normal, :s2l, or :l2s.")
+        end
         X = X[idx,:]
         marker = marker[idx]
+        if length(ms) > 1
+            ms = ms[idx]
+        end
     end
     if dim == 2
-        scatter!(X[:,1],X[:,2],marker_z = marker,ms = ms, c = c, legend = false, mswidth = 0, cbar = true, aspect_ratio = 1)
+        scatter!(X[:,1],X[:,2], marker_z = marker, ms = ms, c = c, legend = false, mswidth = 0, cbar = true, aspect_ratio = 1, grid = false)
     elseif dim == 3
-        scatter!(X[:,1],X[:,2],X[:,3], marker_z = marker, ms = ms, c = c, legend = false, mswidth = 0, cbar = true, aspect_ratio = 1)
+        scatter!(X[:,1],X[:,2],X[:,3], marker_z = marker, ms = ms, c = c, legend = false, mswidth = 0, cbar = true, aspect_ratio = 1, grid = false)
     else
         print("Dimension Error: scatter_gplot! only supports for 2-dim or 3-dim scatter plots.")
     end
