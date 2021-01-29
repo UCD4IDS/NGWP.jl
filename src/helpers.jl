@@ -97,7 +97,7 @@ end
 
 
 """
-    scatter_gplot(X; marker = nothing, ms = 4, smallValFirst = true, c = :viridis)
+    scatter_gplot(X; marker = nothing, ms = 4, plotOrder = :normal, c = :viridis)
 
 SCATTER\\_GPLOT generates a scatter plot figure, which is for quick viewing of a graph signal.
 SCATTER\\_GPLOT!(X; ...) adds a plot to `current` one.
