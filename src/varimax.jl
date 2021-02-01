@@ -24,6 +24,10 @@ function varimax(A; gamma = 1.0, minit = 20, maxit = 1000, reltol = 1e-12)
 		return A
 	end
 
+	if d == m && rank(A) == d
+		return Matrix{Float64}(I, d, m)
+	end
+
 	# Warm up step: start with a good initial orthogonal matrix T by SVD and QR
 	T = Matrix{Float64}(I, m, m)
 	B = A * T
