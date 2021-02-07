@@ -1,4 +1,4 @@
-## Load packages and functions
+# script for Fig.5
 using NGWP, Plots, LightGraphs
 gr(dpi=200)
 
@@ -20,11 +20,11 @@ wavelet_packet_PC = HTree_wavelet_packet(𝚽,ht_vlist_PC,ht_elist_PC)
 ht_elist_VM = ht_elist_PC
 wavelet_packet_VM = HTree_wavelet_packet_varimax(𝚽,ht_elist_VM)
 
-## Wiggle plots
+#################### Fig.5
 j = 5
 for k in [1, 2, 5]
    WW = wavelet_packet_VM[j][k]
    plt = wiggle(sort_wavelets(WW); sc = 0.75)
-   savefig(plt, joinpath(@__DIR__, "../paperfigs/Path512_VM_NGWP_j$(j)k$(k).png"))
+   savefig(plt, joinpath(@__DIR__, "../paperfigs/Path512_VM_NGWP_j$(j-1)k$(k-1).png"))
 end
 current()
