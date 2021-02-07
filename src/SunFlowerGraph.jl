@@ -22,17 +22,16 @@ function SunFlowerGraph(; N = 400)
         G.weights[1,k] = 1/norm(X[1,:] - X[k,:])
         G.weights[k,1] = 1/norm(X[1,:] - X[k,:])
     end
-    for k = 1:13
-        G.weights[k,k+8] = 1/norm(X[k,:] - X[k+8,:])
-        G.weights[k+8,k] = 1/norm(X[k,:] - X[k+8,:])
-        G.weights[k,k+13] = 1/norm(X[k,:] - X[k+13,:])
-        G.weights[k+13,k] = 1/norm(X[k,:] - X[k+13,:])
-    end
-    for k = 14:N
-        G.weights[k,k-8] = 1/norm(X[k,:] - X[k-8,:])
-        G.weights[k-8,k] = 1/norm(X[k,:] - X[k-8,:])
-        G.weights[k,k-13] = 1/norm(X[k,:] - X[k-13,:])
-        G.weights[k-13,k] = 1/norm(X[k,:] - X[k-13,:])
+
+    for k = 1:N
+        if k+8 <= N
+            G.weights[k,k+8] = 1/norm(X[k,:] - X[k+8,:])
+            G.weights[k+8,k] = 1/norm(X[k,:] - X[k+8,:])
+        end
+        if k+13 <= N
+            G.weights[k,k+13] = 1/norm(X[k,:] - X[k+13,:])
+            G.weights[k+13,k] = 1/norm(X[k,:] - X[k+13,:])
+        end
     end
     W = weights(G) #weighted adjacency_matrix
     Lw = Diagonal(sum(W, dims = 2)[:]) - W #weighted laplacian_matrix
