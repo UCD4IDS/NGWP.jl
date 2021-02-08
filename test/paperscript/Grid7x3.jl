@@ -81,7 +81,7 @@ reorder_ind = [1,3,2,5,7,4,6,9,10,8,11,13,14,12,16,18,15,17,20,21,19]
 W_VM = W_VM[:,reorder_ind[eig2grid_ind]];
 sgn = ones(N); sgn[grid2eig_ind[[4,6,8,10,18]]] .= -1; W_VM = W_VM * Diagonal(sgn);
 
-#################### Fig.6
+#################### Fig. 6
 plot()
 for k=1:N
     heatmap!(xej[:,k],yej[:,k],reshape(W_VM[:,k],(Nx,Ny))',c=:viridis,colorbar=false,ratio=1,annotations=(xej[4,k], yej[3,k]+b*dy, text(latexstring("\\psi_{", string(wav_kl[k,1]), ",", string(wav_kl[k,2]), "}"),10)))
