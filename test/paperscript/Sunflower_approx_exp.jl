@@ -1,4 +1,4 @@
-# script for Fig.8, Fig.9, Fig.10, Fig.11
+# script for Fig.8(b)(c), Fig.9, Fig.10(b)(c), Fig.11
 
 using NGWP, JLD, MAT, Plots, LightGraphs, MTSG
 gr(dpi = 200)
