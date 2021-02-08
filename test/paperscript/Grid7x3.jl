@@ -1,4 +1,4 @@
-# script for Fig.2, Fig.4, Fig.6
+# script for Fig.1, Fig.2, Fig.4, Fig.6
 
 using NGWP, LightGraphs, Plots, LaTeXStrings, MultivariateStats
 pyplot(dpi = 200)
@@ -8,6 +8,27 @@ G = LightGraphs.grid([Nx,Ny]); N = nv(G);
 L = Matrix(laplacian_matrix(G))
 Q = incidence_matrix(G; oriented = true)
 𝛌, 𝚽 = eigen(L); 𝚽 = 𝚽.*sign.(𝚽[1,:])';
+
+#################### Fig. 1(a) eigenvectors by nondecreasing eigenvalue ordering
+plot(layout = Plots.grid(3, 7))
+for i in 1:N
+    heatmap!(reshape(𝚽[:,i],(Nx,Ny))', c = :viridis, cbar = false, clims = (-0.4,0.4), frame = :none, ratio = 1, title = latexstring("\\phi_{", i-1, "}"), titlefont = 12, subplot = i)
+end
+plt = current()
+savefig(plt, joinpath(@__DIR__, "../paperfigs/grid7x3_evsp_title.png"))
+
+#################### Fig. 1(b) eigenvectors by natural frequency ordering
+# find correct 2D index
+grid2eig_ind = [1,2,3,6,8,12,15,4,5,7,9,13,16,18,10,11,14,17,19,20,21]; eig2grid_ind = sortperm(grid2eig_ind);
+eig2dct = Array{Int64,3}(undef, Nx, Ny, 2); for i in 1:Nx; for j in 1:Ny; eig2dct[i,j,1] = i-1; eig2dct[i,j,2] = j-1; end; end; eig2dct = reshape(eig2dct, (N,2)); eig2dct = eig2dct[eig2grid_ind,:];
+
+plot(layout = Plots.grid(3, 7))
+for i in 1:N
+    k = grid2eig_ind[i]
+    heatmap!(reshape(𝚽[:,k],(Nx,Ny))', c = :viridis, cbar = false, clims = (-0.4,0.4), frame = :none, ratio = 1, title = latexstring("\\varphi_{", string(eig2dct[k,1]), ",", string(eig2dct[k,2]), "}"), titlefont = 12, subplot = i)
+end
+plt = current()
+savefig(plt, joinpath(@__DIR__, "../paperfigs/grid7x3_dct_title2.png"))
 
 # DAG pseudo-metric
 distDAG = eigDAG_Distance(𝚽,Q,N)
@@ -24,19 +45,15 @@ for k=1:N
     xej[:,k]=LinRange(E[1,k]-Ny*a*dx,E[1,k]+Ny*a*dx, Nx); yej[:,k]=LinRange(E[2,k]-a*dy,E[2,k]+a*dy, Ny)
 end
 
-# find correct 2D index
-grid2eig_ind = [1,2,3,6,8,12,15,4,5,7,9,13,16,18,10,11,14,17,19,20,21]; eig2grid_ind = sortperm(grid2eig_ind);
-eig2dct = Array{Int64,3}(undef, Nx, Ny, 2); for i in 1:Nx; for j in 1:Ny; eig2dct[i,j,1] = i-1; eig2dct[i,j,2] = j-1; end; end; eig2dct = reshape(eig2dct, (N,2)); eig2dct = eig2dct[eig2grid_ind,:];
-
-#################### Fig.2
+#################### Fig. 2
 plot()
 for k=1:N
-    heatmap!(xej[:,k],yej[:,k],reshape(𝚽[:,k],(Nx,Ny))',c=:viridis,colorbar=false,ratio=1,annotations=(xej[4,k], yej[3,k]+b*dy, text(latexstring("\\phi_{", string(eig2dct[k,1]), ",", string(eig2dct[k,2]), "}"),10)))
+    heatmap!(xej[:,k],yej[:,k],reshape(𝚽[:,k],(Nx,Ny))',c=:viridis,colorbar=false,ratio=1,annotations=(xej[4,k], yej[3,k]+b*dy, text(latexstring("\\varphi_{", string(eig2dct[k,1]), ",", string(eig2dct[k,2]), "}"),10)))
 end
 plt = plot!(aspect_ratio = 1, xlim = [-1.4, 1.3], ylim = [-1.4, 1.3], grid = false, clims=(-0.4,0.4))
 savefig(plt, joinpath(@__DIR__, "../paperfigs/Grid7x3_DAG_MDS.png"))
 
-#################### Fig.4
+#################### Fig. 4
 # first level partition
 p1x = [-0.2, 1.0, NaN]; p1y = [1.3, -1.0, NaN]; plot!(p1x, p1y, c = :red, legend = false, width = 3)
 # second level partition
