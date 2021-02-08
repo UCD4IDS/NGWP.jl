@@ -16,6 +16,6 @@ for f in filenames
     end
 end
 
-export SunFlowerGraph, dualGraph, HTree_EVlist, HTree_wavelet_packet, HTree_wavelet_packet_varimax, HTree_coeff_wavelet_packet, scatter_gplot, scatter_gplot!, signal_transform_coeff, approx_error_plot2, HTree_findParent, best_basis_selection, best_basis_selected_subspaces, dualBinaryTree, find_deepest_leaf, NGWP_jkl, eigDAG_Distance, eigHAD_Distance, eigROT_Distance, eigTSD_Distance, spike, characteristic, sort_wavelets, wiggle, wiggle!
+export SunFlowerGraph, dualGraph, HTree_EVlist, HTree_wavelet_packet, HTree_wavelet_packet_varimax, HTree_coeff_wavelet_packet, scatter_gplot, scatter_gplot!, signal_transform_coeff, approx_error_plot2, HTree_findParent, best_basis_selection, best_basis_selected_subspaces, dualBinaryTree, find_deepest_leaf, NGWP_jkl, eigDAG_Distance, eigHAD_Distance, eigROT_Distance, eigTSD_Distance, spike, characteristic, sort_wavelets, transform2D, wiggle, wiggle!
 
 end
