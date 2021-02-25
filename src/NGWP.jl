@@ -17,7 +17,7 @@ for f in filenames
     end
 end
 
-export eigDAG_Distance, eigHAD_Distance, eigHAD_Affinity,
+export eigDAG_Distance, eigHAD_Distance, eigHAD_Affinity
 export eigROT_Distance, ROT_Distance, eigEMD_Distance
 export SunFlowerGraph, dualgraph
 export pc_ngwp, pairclustering
