@@ -241,10 +241,10 @@ get all expansion coefficients of `f` via all methods in NGWP.jl and MTSG.jl
 function getall_expansioncoeffs(G_Sig::GraphSig, GP_star::GraphPart, VM_NGWP::Array{Float64,3}, PC_NGWP::Array{Float64,3}, 𝚽::Matrix{Float64})
     ############# VM_NGWP
     dmatrix_VM = ngwp_analysis(G_Sig, VM_NGWP)
-    dvec_vm_ngwp, BS_vm_ngwp = ngwp_bestbasis(dmatrix_VM, GP_dual)
+    dvec_vm_ngwp, BS_vm_ngwp = ngwp_bestbasis(dmatrix_VM, GP_star)
     ############# PC_NGWP
     dmatrix_PC = ngwp_analysis(G_Sig, PC_NGWP)
-    dvec_pc_ngwp, BS_pc_ngwp = ngwp_bestbasis(dmatrix_PC, GP_dual)
+    dvec_pc_ngwp, BS_pc_ngwp = ngwp_bestbasis(dmatrix_PC, GP_star)
     ############# Laplacian
     dvec_Laplacian = 𝚽' * G_Sig.f
     ############# plain Laplacian eigenvectors coefficients
