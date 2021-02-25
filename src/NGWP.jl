@@ -2,9 +2,10 @@ __precompile__()
 
 module NGWP
 
-using LinearAlgebra, SparseArrays, LightGraphs, SimpleWeightedGraphs, Clustering, JuMP, Clp, Optim, OptimalTransport, MTSG, Statistics
+using LinearAlgebra, SparseArrays, LightGraphs, SimpleWeightedGraphs, Clustering
+using JuMP, Clp, Optim, OptimalTransport, MTSG, Statistics
 import Plots: plot, plot!, scatter, scatter!
-import StatsBase:crosscor
+import StatsBase: crosscor
 
 filenames = readdir(@__DIR__)
 
@@ -16,6 +17,14 @@ for f in filenames
     end
 end
 
-export SunFlowerGraph, dualGraph, HTree_EVlist, HTree_wavelet_packet, HTree_wavelet_packet_varimax, HTree_coeff_wavelet_packet, scatter_gplot, scatter_gplot!, signal_transform_coeff, approx_error_plot2, HTree_findParent, best_basis_selection, best_basis_selected_subspaces, dualBinaryTree, find_deepest_leaf, NGWP_jkl, eigDAG_Distance, eigHAD_Distance, eigROT_Distance, eigTSD_Distance, spike, characteristic, sort_wavelets, transform2D, wiggle, wiggle!
+export eigDAG_Distance, eigHAD_Distance, eigHAD_Affinity,
+export eigROT_Distance, ROT_Distance, eigEMD_Distance
+export SunFlowerGraph, dualgraph
+export pc_ngwp, pairclustering
+export vm_ngwp
+export ngwp_analysis, ngwp_bestbasis, NGWP_jkl
+export scatter_gplot, scatter_gplot!, wiggle, wiggle!
+export spike, characteristic, sort_wavelets, transform2D
+export getall_expansioncoeffs, approx_error_plot
 
 end

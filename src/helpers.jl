@@ -18,52 +18,53 @@ end
 
 
 """
-    spike(i,n)
+    spike(i, N)
 
-SPIKE gives the n-dim spike vector with i-th element equals 1.
+SPIKE gives the N-dim spike vector with i-th element equals 1.
 
 # Input Arguments
 - `i::Int`: index for one.
-- `n::Int`: dimension of the target spike vector.
+- `N::Int`: dimension of the target spike vector.
 
 # Output Argument
-- `a::Array{Float64}`: the n-dim spike vector with i-th element equals 1.
+- `v::Array{Float64}`: the N-dim spike vector with i-th element equals 1.
 
 """
-function spike(i,n)
-    a = zeros(n)
-    a[i] = 1
-    return a
+function spike(i, N)
+    v = zeros(N)
+    v[i] = 1
+    return v
 end
 
 """
-    characteristic(list,n)
+    characteristic(list, N)
 
-CHARACTERISTIC gives the characteristic function in n-dim vector space with values of index in list equal to 1.
+CHARACTERISTIC gives the characteristic function in n-dim vector space with
+    values of index in list equal to 1.
 
 # Input Arguments
 - `list::Array{Int}`: list of indices.
-- `n::Int`: dimension of the target vector.
+- `N::Int`: dimension of the target vector.
 
 # Output Argument
 - `v::Array{Float64}`: the n-dim characteristic vector with values of index in list equal to 1.
 
 """
-function characteristic(list,n)
-    v = zeros(n)
+function characteristic(list, N)
+    v = zeros(N)
     v[list] .= 1.0
     return v
 end
 
 
 """
-    heat_sol(f0,Φ,Σ,t)
+    heat_sol(f0,𝚽,Σ,t)
 
 HEAT\\_SOL gives the solution of heat partial differential equation with initial condition u(⋅, 0) = f0
 
 # Input Arguments
 - `f0::Array{Float64}`: initial condition vector.
-- `Φ::Matrix{Float64}`: graph Laplacian eigenvectors, served as graph Fourier transform matrix
+- `𝚽::Matrix{Float64}`: graph Laplacian eigenvectors, served as graph Fourier transform matrix
 - `Σ::Array{Int}`: diagonal matrix of eigenvalues.
 - `t::Float`: time elapse.
 
@@ -71,8 +72,8 @@ HEAT\\_SOL gives the solution of heat partial differential equation with initial
 - `u::Array{Float64}`: the solution vector at time t
 
 """
-function heat_sol(f0,Φ,Σ,t)
-    u = Φ * (exp.(-t .* Σ) .* Φ' * f0)
+function heat_sol(f0, 𝚽, Σ, t)
+    u = 𝚽 * (exp.(-t .* Σ) .* 𝚽' * f0)
     return u
 end
 
@@ -91,7 +92,7 @@ FREQ\\_BAND\\_MATRIX provides characteristic diagonal matrix, which is useful fo
 
 """
 function freq_band_matrix(ls, n)
-    f = characteristic(list,n)
+    f = characteristic(list, n)
     return Diagonal(f)
 end
 
@@ -104,9 +105,12 @@ SCATTER\\_GPLOT!(X; ...) adds a plot to `current` one.
 
 # Input Arguments
 - `X::Matrix{Float64}`: points locations, can be 2-dim or 3-dim.
-- `marker::Array{Float64}`: default is nothing. Present different colors given different signal value at each node.
-- `ms::Array{Float64}`: default is 4. Present different node sizes given different signal value at each node.
-- `plotOrder::Symbol`: default is normal. Optional choices :s2l or :l2s, i.e., plots from the smallest value of `marker` to the largest value or the other way around.
+- `marker::Array{Float64}`: default is nothing. Present different colors given
+    different signal value at each node.
+- `ms::Array{Float64}`: default is 4. Present different node sizes given
+    different signal value at each node.
+- `plotOrder::Symbol`: default is normal. Optional choices :s2l or :l2s, i.e.,
+    plots from the smallest value of `marker` to the largest value or the other way around.
 - `c::Symbol`: default is :viridis. Colors.
 
 """
@@ -165,98 +169,89 @@ end
 """
     cat_plot(X; marker = nothing, ms = 4)
 
-CAT\\_PLOT generates a scatter plot figure for cat example, which is for quick viewing of a graph signal within a specific range (i.e., xlims, ylims, zlims).
+CAT\\_PLOT generates a scatter plot figure for cat example, which is for quick
+viewing of a graph signal within a specific range (i.e., xlims, ylims, zlims).
 CAT\\_PLOT!(X; ...) adds a plot to `current` one.
 
 # Input Arguments
 - `X::Matrix{Float64}`: 3-dim points.
-- `marker::Array{Float64}`: default is nothing. Present different colors given different signal value at each node.
-- `ms::Array{Float64}`: default is 4. Present different node sizes given different signal value at each node.
+- `marker::Array{Float64}`: default is nothing. Present different colors given
+    different signal value at each node.
+- `ms::Array{Float64}`: default is 4. Present different node sizes given
+    different signal value at each node.
 
 """
 function cat_plot(X; marker = nothing, ms = 4)
-    scatter(X[:,1],X[:,2],X[:,3], marker_z = marker, ms = ms, c = :viridis, legend = false, cbar = true, aspect_ratio = 1, xlims = [-100, 100], ylims = [-100, 100], zlims = [-100, 100])
+    scatter(X[:,1],X[:,2],X[:,3], marker_z = marker, ms = ms, c = :viridis,
+        legend = false, cbar = true, aspect_ratio = 1, xlims = [-100, 100],
+        ylims = [-100, 100], zlims = [-100, 100])
 end
 
 function cat_plot!(X; marker = nothing, ms = 4)
-    scatter!(X[:,1],X[:,2],X[:,3], marker_z = marker, ms = ms, c = :viridis, legend = false, cbar = true, aspect_ratio = 1, xlims = [-100, 100], ylims = [-100, 100], zlims = [-100, 100])
+    scatter!(X[:,1],X[:,2],X[:,3], marker_z = marker, ms = ms, c = :viridis,
+        legend = false, cbar = true, aspect_ratio = 1, xlims = [-100, 100],
+        ylims = [-100, 100], zlims = [-100, 100])
 end
 
 
 """
-    approx_error_plot(ortho_mx_list, f; fraction_cap = 0.3, label = false, Save = false, path = "")
+    approx_error_plot(DVEC::Vector{Vector{Float64}}; frac::Float64 = 0.50)
 
-APPROX\\_ERROR\\_PLOT draw approx. error figure w.r.t. fraction of kept coefficients
+draw relative approx. error w.r.t. fraction of coefficients retained (FCR)
 
 # Input Arguments
-- `ortho_mx_list::Array{Matrix{Float64}}`: a list of orthonormal matrices.
-- `f::Array{Float64}`: target graph signal for approximation.
-- `fraction_cap::Float`: default is 0.3. The capital of fration of kept coefficients.
+- `DVEC::Vector{Vector{Float64}}`: a list of expansion coefficients.
+- `fraction::Float64`: default is 0.5.
 
 """
-function approx_error_plot(ortho_mx_list, f; fraction_cap = 0.3, label = false, Save = false, path = "")
-    N = length(f)
-    L = length(ortho_mx_list)
-    err = [[1.0] for _ in 1:L]
-    coeff = [mx'*f for mx in ortho_mx_list]
-
-    for frac = 0.01:0.01:fraction_cap
-        numKept = Int(ceil(frac * N))
-        for l in 1:L
-            ind = sortperm(coeff[l].^2, rev = true)[numKept+1:end]
-            push!(err[l], norm(coeff[l][ind])/norm(f))
-        end
-    end
-
-    gr(dpi = 300)
-    fraction = 0:0.01:fraction_cap
-    plt = plot(fraction, err, yscale=:log10, lab = label, linewidth = 3, xaxis = "Fraction of Coefficients Retained", yaxis = "Relative Approximation Error")
-    if Save
-        savefig(plt, path)
-        return "figure saved! @ " * path
-    end
-    return "use current() to show figure."
-end
-
-################################################################################
-####################### Approximation error plot################################
-################################################################################
-### function to plot the approximation error curve
-function approx_error_plot2(DVEC::Array{Array{Float64,1},1}; frac = 0.50)
-    plot(xaxis = "Fraction of Coefficients Retained", yaxis = "Relative Approximation Error")
-    T = ["Laplacian", "HGLET", "Haar", "Walsh",  "GHWT_c2f", "GHWT_f2c", "eGHWT", "PC-NGWP", "VM-NGWP"]
-    L = [(:dashdot,:red), (:solid,:brown), (:dashdot,:orange), (:dashdot,:pink), (:solid,:gray), (:solid,:green), (:solid,:blue), (:solid,:purple), (:solid,:black)]
+function approx_error_plot(DVEC::Vector{Vector{Float64}}; frac::Float64 = 0.50)
+    plot(xaxis = "Fraction of Coefficients Retained",
+            yaxis = "Relative Approximation Error")
+    T = ["Laplacian", "HGLET", "Haar", "Walsh", "GHWT_c2f", "GHWT_f2c", "eGHWT",
+            "PC-NGWP", "VM-NGWP"]
+    L = [(:dashdot, :red), (:solid, :brown), (:dashdot, :orange),
+            (:dashdot, :pink), (:solid, :gray), (:solid,:green),
+            (:solid,:blue), (:solid,:purple), (:solid,:black)]
     for i = 1:length(DVEC)
         dvec = DVEC[i]
         N = length(dvec)
         dvec_norm = norm(dvec,2)
         dvec_sort = sort(dvec.^2) # the smallest first
-        er = max.(sqrt.(reverse(cumsum(dvec_sort)))/dvec_norm, 1e-12) # this is the relative L^2 error of the whole thing, i.e., its length is N
+        er = max.(sqrt.(reverse(cumsum(dvec_sort)))/dvec_norm, 1e-12)
         p = Int64(floor(frac*N)) + 1 # upper limit
-        plot!(frac*(0:(p-1))/(p-1), er[1:p], yaxis=:log, xlims = (0.,frac), label = T[i], line = L[i], linewidth = 2, grid = false)
+        plot!(frac*(0:(p-1))/(p-1), er[1:p], yaxis=:log, xlims = (0.,frac),
+                label = T[i], line = L[i], linewidth = 2, grid = false)
     end
 end
 
-function signal_transform_coeff(f, ht_elist_dual, ht_elist_varimax, wavelet_packet_dual, wavelet_packet_varimax, 𝛷, W, X)
-    ## Best basis selection algorithm
-    parent_dual = HTree_findParent(ht_elist_dual)
-    Wav_dual = best_basis_selection(f, wavelet_packet_dual, parent_dual)
-    parent_varimax = HTree_findParent(ht_elist_varimax)
-    Wav_varimax = best_basis_selection(f, wavelet_packet_varimax, parent_varimax)
-    ############# varimax NGW coefficients
-    dvec_varimax = Wav_varimax' * f
-    ############# spectral_prioritized PC NGW coefficients
-    dvec_spectral = Wav_dual' * f
-    ############# plain Laplacian eigenvectors coefficients
-    dvec_Laplacian = 𝛷' * f
-    ## MTSG
-    G_Sig = GraphSig(1.0*W, xy=X, f=reshape(f, (length(f),1)))
-    G_Sig = Adj2InvEuc(G_Sig)
-    GP = partition_tree_fiedler(G_Sig,:Lrw)
-    dmatrixH = HGLET_Analysis_All(G_Sig, GP)[1] # expansion coefficients of 3-way HGLET bases
-    dvec_hglet, BS_hglet, trans_hglet = HGLET_GHWT_BestBasis(GP, dmatrixH = dmatrixH, costfun = 1) # best-basis among all combinations of bases
 
-    dmatrix = ghwt_analysis!(G_Sig, GP=GP)
+"""
+    getall_expansioncoeffs(G_Sig::GraphSig, GP_star::GraphPart, VM_NGWP::Array{Float64,3}, PC_NGWP::Array{Float64,3}, 𝚽::Matrix{Float64})
+
+get all expansion coefficients of `f` via all methods in NGWP.jl and MTSG.jl
+
+# Input Arguments
+- `G_Sig::GraphSig`: GraphSig of the primal graph
+- `GP_star::GraphPart`: GraphPart of the dual graph
+- `VM_NGWP::Array{Float64,3}`: varimax NGWP.
+- `PC_NGWP::Array{Float64,3}`: pair-clustering NGWP.
+- `𝚽::Matrix{Float64}`: the matrix of graph Laplacian eigenvectors.
+
+"""
+function getall_expansioncoeffs(G_Sig::GraphSig, GP_star::GraphPart, VM_NGWP::Array{Float64,3}, PC_NGWP::Array{Float64,3}, 𝚽::Matrix{Float64})
+    ############# VM_NGWP
+    dmatrix_VM = ngwp_analysis(G_Sig, VM_NGWP)
+    dvec_vm_ngwp, BS_vm_ngwp = ngwp_bestbasis(dmatrix_VM, GP_dual)
+    ############# PC_NGWP
+    dmatrix_PC = ngwp_analysis(G_Sig, PC_NGWP)
+    dvec_pc_ngwp, BS_pc_ngwp = ngwp_bestbasis(dmatrix_PC, GP_dual)
+    ############# Laplacian
+    dvec_Laplacian = 𝚽' * G_Sig.f
+    ############# plain Laplacian eigenvectors coefficients
+    GP = partition_tree_fiedler(G_Sig)
+    dmatrixH = HGLET_Analysis_All(G_Sig, GP)[1]
+    dvec_hglet, BS_hglet, _ = HGLET_GHWT_BestBasis(GP, dmatrixH = dmatrixH, costfun = 1)
+    dmatrix = ghwt_analysis!(G_Sig, GP = GP)
     ############# Haar
     BS_haar = bs_haar(GP)
     dvec_haar = dmatrix2dvec(dmatrix, GP, BS_haar)
@@ -269,125 +264,32 @@ function signal_transform_coeff(f, ht_elist_dual, ht_elist_varimax, wavelet_pack
     dvec_f2c, BS_f2c = ghwt_f2c_bestbasis(dmatrix, GP)
     ############# eGHWT
     dvec_eghwt, BS_eghwt = ghwt_tf_bestbasis(dmatrix, GP)
-    DVEC = [dvec_Laplacian[:], dvec_hglet[:], dvec_haar[:], dvec_walsh[:], dvec_c2f[:], dvec_f2c[:], dvec_eghwt[:], dvec_spectral[:], dvec_varimax[:]]
+    DVEC = [dvec_Laplacian[:], dvec_hglet[:], dvec_haar[:], dvec_walsh[:],
+            dvec_c2f[:], dvec_f2c[:], dvec_eghwt[:], dvec_pc_ngwp[:],
+            dvec_vm_ngwp[:]]
     return DVEC
-end
-
-function signal_transform_coeff2(f, g, ht_elist_dual, ht_elist_varimax, wavelet_packet_dual, wavelet_packet_varimax, 𝛷, W, X)
-    parent_dual = HTree_findParent(ht_elist_dual); W_PC = best_basis_selection(f, wavelet_packet_dual, parent_dual)
-    parent_varimax = HTree_findParent(ht_elist_varimax); W_VM = best_basis_selection(f, wavelet_packet_varimax, parent_varimax)
-    ############# spectral_prioritized PC NGW coefficients
-    dvec_spectral = W_PC' * [f g]
-    ############# varimax NGW coefficients
-    dvec_varimax = W_VM' * [f g]
-    ############# plain Laplacian eigenvectors coefficients
-    dvec_Laplacian = 𝛷' * [f g]
-    tmp=zeros(length(f),2); tmp[:,1]=f; tmp[:,2]=g; G_Sig=GraphSig(1.0*W, xy=X, f=tmp); G_Sig = Adj2InvEuc(G_Sig); GP = partition_tree_fiedler(G_Sig,:Lrw);
-    dmatrix = ghwt_analysis!(G_Sig, GP=GP)
-    ############# Haar
-    BS_haar = bs_haar(GP)
-    dvec_haar = dmatrix2dvec(dmatrix, GP, BS_haar)
-    ############# Walsh
-    BS_walsh = bs_walsh(GP)
-    dvec_walsh = dmatrix2dvec(dmatrix, GP, BS_walsh)
-    ############# GHWT_c2f
-    dvec_c2f, BS_c2f = ghwt_c2f_bestbasis(dmatrix, GP)
-    ############# GHWT_f2c
-    dvec_f2c, BS_f2c = ghwt_f2c_bestbasis(dmatrix, GP)
-    ############# eGHWT
-    dvec_eghwt, BS_eghwt = ghwt_tf_bestbasis(dmatrix, GP)
-    DVEC = [dvec_haar, dvec_walsh, dvec_Laplacian, dvec_c2f, dvec_f2c, dvec_eghwt, dvec_spectral, dvec_varimax]
-    return DVEC
-end
-
-function integrate_approx_results(DVEC, num_kept_coeffs, filename)
-    ERR = Array{Float64,1}[]
-    for i in 1:length(DVEC)
-        dvec = DVEC[i]
-        N = length(dvec)
-        dvec_norm = norm(dvec,2)
-        dvec_sort = sort(dvec.^2)  # the smallest first
-        er = max.(sqrt.(reverse(cumsum(dvec_sort))) ./ dvec_norm, 1e-12)  # this is the relative L^2-norm error of the whole thing, i.e., its length is N
-        push!(ERR, er[num_kept_coeffs])
-    end
-    frames_approx_res = CSV.File(joinpath(@__DIR__, "..", "datasets", filename))
-    er_soft_cluster_frame = [max(sqrt(frames_approx_res[i][2]), 1e-12) for i in 1:length(num_kept_coeffs)]
-    push!(ERR, er_soft_cluster_frame)
-    er_SGWT = [max(sqrt(frames_approx_res[i][3]), 1e-12) for i in 1:length(num_kept_coeffs)]
-    push!(ERR, er_SGWT)
-    return ERR
-end
-
-function integrate_approx_results2(DVEC, num_kept_coeffs, filename)
-    ERR = Array{Float64,1}[]
-    for i in 1:length(DVEC)
-        dvec_f = DVEC[i][:,1]
-        dvec_g = DVEC[i][:,2]
-        N = length(dvec_f)
-        dvec_f_norm = norm(dvec_f)
-        ind = sortperm(dvec_g.^2, rev = true)  # the largest first
-        er = zeros(N)
-        for k in 1:N
-            er[k] = max(sqrt(norm(dvec_f[ind[1:k]] - dvec_g[ind[1:k]])^2 + norm(dvec_f[ind[k+1:end]])^2)/dvec_f_norm, 1e-12)
-        end
-        push!(ERR, er[num_kept_coeffs])
-    end
-    frames_approx_res = CSV.File(joinpath(@__DIR__, "..", "datasets", filename))
-    er_soft_cluster_frame = [max(sqrt(frames_approx_res[i][2]), 1e-12) for i in 1:length(frames_approx_res)]
-    push!(ERR, er_soft_cluster_frame)
-    er_SGWT = [max(sqrt(frames_approx_res[i][3]), 1e-12) for i in 1:length(frames_approx_res)]
-    push!(ERR, er_SGWT)
-    return ERR
-end
-
-function approx_error_plot3(ERR::Array{Array{Float64,1},1}; num_kept_coeffs = 10:10:280, LW = [2, 2, 2, 2, 2, 2, 2, 2, 2, 2])
-    gr(dpi = 400)
-    plot(xaxis = "Number of Coefficients Retained", yaxis = "Relative Approximation Error")
-    T = ["Haar", "Walsh", "Laplacian", "GHWT_c2f", "GHWT_f2c", "eGHWT", "PC-NGWP", "VM-NGWP", "SC-Frame", "SGWT"]
-    L = [(:dashdot,:orange), (:dashdot,:pink), (:dashdot, :red), (:solid, :gray), (:solid, :green), (:solid, :blue), (:solid, :purple), (:solid, :black), (:dash, :navy), (:dash, :teal)]
-    for i in 1:length(ERR)
-        plot!(num_kept_coeffs, ERR[i], yaxis=:log, xlims = (0.,num_kept_coeffs[end]), label = T[i], line = L[i], linewidth = LW[i])
-    end
-end
-
-
-"""
-    sortWaveletsByCenteredLocations(Wav)
-
-sort wavelets by centered locations
-
-# Input Argument
-- `Wav::Matrix{Float64}`: a matrix whose columns are wavelet vectors.
-
-# Output Argument
-- `Wav::Matrix{Float64}`: the sorted matrix.
-"""
-function sortWaveletsByCenteredLocations(Wav)
-    ord = findmax(abs.(Wav), dims = 1)[2][:]
-    idx = sortperm([i[1] for i in ord])
-    return Wav[:,idx]
 end
 
 using Clustering
 """
-    spectral_clustering(𝛷, M)
+    spectral_clustering(𝚽, M)
 
 SPECTRAL_CLUSTERING return M graph clusters, i.e., {Vₖ| k = 1,2,...,M}.
 
 # Input Argument
-- `𝛷::Matrix{Float64}`: the matrix of graph Laplacian eigenvectors.
-- `M::Int64`: the number of graph clusters.
+- `𝚽::Matrix{Float64}`: the matrix of graph Laplacian eigenvectors.
+- `M::Int`: the number of graph clusters.
 
 # Output Argument
-- `clusters::Array{Array{Int64}}`: graph cluster indices.
+- `clusters::Vector{Vector{Int}}`: graph cluster indices.
 
 """
-function spectral_clustering(𝛷, M)
+function spectral_clustering(𝚽, M)
     if M < 2
-        return [1:size(𝛷,1)]
+        return [1:size(𝚽, 1)]
     end
-    cluster_indices = assignments(kmeans(𝛷[:,2:M]', M))
-    clusters = Array{Array{Int64,1},1}()
+    cluster_indices = assignments(kmeans(𝚽[:, 2:M]', M))
+    clusters = Vector{Vector{Int}}[]
     for k in 1:M
         push!(clusters, findall(cluster_indices .== k)[:])
     end
@@ -412,7 +314,8 @@ end
 """
     NN_rendering(X, Img_Mat)
 
-NN\\_RENDERING generates a rendering signal at each point of `X` from the image `Img_Mat` by nearest neighbor method.
+NN\\_RENDERING generates a rendering signal at each point of `X` from the image
+`Img_Mat` by nearest neighbor method.
 """
 function NN_rendering(X, Img_Mat)
     N = size(X,1)
@@ -431,7 +334,8 @@ end
 """
     Bilinear_rendering(X, Img_Mat)
 
-NN\\_RENDERING generates a rendering signal at each point of `X` from the image `Img_Mat` by bilinear interpolation method.
+NN\\_RENDERING generates a rendering signal at each point of `X` from the image
+`Img_Mat` by bilinear interpolation method.
 """
 function Bilinear_rendering(X, Img_Mat)
     N = size(X,1)
@@ -460,7 +364,7 @@ DCT1D returns k-th 1D DCT basis vector in Rᴺ.
 - `φ::Array{Float64}`: k-th 1D DCT basis vector in Rᴺ. (k is 1-indexed)
 """
 function dct1d(k, N)
-    φ = [cos(π*(k-1)*(l+0.5)/N) for l = 0:N-1]
+    φ = [cos(π * (k - 1) * (l + 0.5) / N) for l = 0:(N - 1)]
     return φ ./ norm(φ, 2)
 end
 
@@ -482,8 +386,8 @@ function dct2d_basis(N1, N2)
     ind = 1
     for i in 1:N1, j in 1:N2
         φ₁, φ₂ = dct1d(i, N1), dct1d(j, N2)
-        φ = reshape(φ₁*φ₂', N)
-        𝚽[:,ind] = φ
+        φ = reshape(φ₁ * φ₂', N)
+        𝚽[:, ind] = φ
         ind += 1
     end
     return 𝚽
@@ -495,15 +399,15 @@ end
 ALTERNATING\\_NUMBERS e.g., n = 5, returns [1,5,2,4,3]; n = 6, returns [1,6,2,5,3,4]
 
 # Input Arguments
-- `N1::Int64`: number of nodes in x-axis.
+- `n::Int64`: number of nodes in x-axis.
 
 # Output Argument
 - `arr::Array{Int64}`: result array.
 """
 function alternating_numbers(n)
-    mid = Int(ceil(n/2))
+    mid = Int(ceil(n / 2))
     arr1 = 1:mid
-    arr2 = n:-1:(mid+1)
+    arr2 = n:-1:(mid + 1)
     arr = Array{Int64}(zeros(n))
     p1, p2 = 1, 1
     for i = 1:n
@@ -531,36 +435,36 @@ COMPUTE\\_SNR, g = f + ϵ, SNR = 20 * log10(norm(f)/norm(g-f)).
 - `SNR::Float64`: SNR value.
 """
 function compute_SNR(f, g)
-    SNR = 20 * log10(norm(f)/norm(g-f))
+    SNR = 20 * log10(norm(f) / norm(g - f))
     return SNR
 end
 
 """
-    sort_wavelets(A)
+    sort_wavelets(A; onlyByLoc = false)
 
-SORT\\_WAVELETS, sort A's column wavelet vectors based on their focused location on Path.
+sort A's column wavelet vectors based on their focused nodes' indices. flip
+signs via the cross correlation.
 
 # Input Arguments
 - `A::Matrix{Float64}`: whose column vectors are wavelets.
 
 # Output Argument
-- `A::Matrix{Float64}`: a matrix with sorted column.
+- `A::Matrix{Float64}`: a matrix with sorted and sign flipped column.
 """
-function sort_wavelets(A; order_by_loc = true)
-    # sgn = (maximum(A, dims = 1)[:] .> -minimum(A, dims = 1)[:]) .* 2 .- 1
-    # A = (A' .* sgn)'
-
-    if order_by_loc
-        ord = findmax(abs.(A), dims = 1)[2][:]
-        idx = sortperm([j[1] for j in ord])
-        A = A[:,idx]
+function sort_wavelets(A; onlyByLoc = false)
+    ord = findmax(abs.(A), dims = 1)[2][:]
+    idx = sortperm([j[1] for j in ord])
+    A = A[:, idx]
+    if onlyByLoc
+        return A
     end
 
-    N = size(A,1)
-    sgn = ones(size(A,2))
-    mid = Int(round(size(A,2)/2))
-    for i in 1:size(A,2)
-        cor_res = crosscor(A[:,mid], A[:,i], -Int(ceil(N/2)):Int(floor(N/2)))
+    N = size(A, 1)
+    sgn = ones(size(A, 2))
+    mid = Int(round(size(A, 2) / 2))
+    A[:, mid] .*= (maximum(A[:, mid]) > -minimum(A[:, mid])) * 2 - 1
+    for i in 1:size(A, 2)
+        cor_res = crosscor(A[:, mid], A[:, i], -Int(ceil(N / 2)):Int(floor(N / 2)))
         if maximum(cor_res) < -minimum(cor_res)
             sgn[i] = -1
         end
