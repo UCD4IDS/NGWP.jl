@@ -1,5 +1,8 @@
 """
-    (dvec_ngwp, BS_ngwp) = ngwp_bestbasis(dmatrix::Array{Float64,3}, GP_star::GraphPart; cfspec::Any = 1.0, flatten::Any = 1.0)
+    (dvec_ngwp, BS_ngwp) = ngwp_bestbasis(dmatrix::Array{Float64,3}, GP_star::GraphPart;
+                                          cfspec::Any = 1.0, flatten::Any = 1.0,
+                                          j_start::Int = 1, j_end::Int = size(dmatrix, 2),
+                                          useParent::Bool = true)
 
 Select the best basis from the matrix of NGWP expansion coefficients.
 
@@ -10,6 +13,8 @@ Select the best basis from the matrix of NGWP expansion coefficients.
     i.e., 1-norm)
 - `flatten::Any`: the method for flattening vector-valued data to scalar-valued
     data (default = 1.0, i.e, 1-norm)
+- `useParent::Bool`: the flag to indicate if we update the selected best basis
+    subspace to the parent when parent and child have the same cost (default = false)
 
 #  Output Arguments
 - `dvec_ngwp::Matrix{Float64}`: the vector of expansion coefficients corresponding
@@ -18,9 +23,11 @@ Select the best basis from the matrix of NGWP expansion coefficients.
 """
 function ngwp_bestbasis(dmatrix::Array{Float64,3}, GP_star::GraphPart;
                             cfspec::Any = 1.0, flatten::Any = 1.0,
-                            j_start::Int = 1, j_end::Int = size(dmatrix, 2))
+                            j_start::Int = 1, j_end::Int = size(dmatrix, 2),
+                            useParent::Bool = false)
     dvec_ngwp, BS_ngwp = ghwt_c2f_bestbasis(dmatrix, GP_star; cfspec = cfspec,
-                            flatten = flatten, j_start = j_start, j_end = j_end)
+                            flatten = flatten, j_start = j_start, j_end = j_end,
+                            useParent = useParent)
     BS_ngwp.description = "NGWP Best Basis"
     return dvec_ngwp, BS_ngwp
 end

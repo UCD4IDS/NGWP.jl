@@ -12,7 +12,7 @@ W = 1.0 * adjacency_matrix(G)
 ## Build NGWPs
 Gstar_Sig = GraphSig(W)
 G_Sig = GraphSig(W, xy = X)
-GP_dual = partition_tree_fiedler(Gstar_Sig, :Lrw, false)
+GP_dual = partition_tree_fiedler(Gstar_Sig; swapRegion = false)
 GP_primal = pairclustering(𝚽, GP_dual)
 
 @time VM_NGWP = vm_ngwp(𝚽, GP_dual)

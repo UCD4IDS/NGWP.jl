@@ -79,7 +79,7 @@ savefig(plt, joinpath(@__DIR__, "../paperfigs/Grid7x3_DAG_2levels_partition.png"
 
 ## Build Dual Graph
 Gstar_Sig = dualgraph(distDAG)
-GP_dual = partition_tree_fiedler(Gstar_Sig, :Lrw, false)
+GP_dual = partition_tree_fiedler(Gstar_Sig; swapRegion = false)
 GP_primal = pairclustering(𝚽, GP_dual)
 
 @time VM_NGWP = vm_ngwp(𝚽, GP_dual)

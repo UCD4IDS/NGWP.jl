@@ -19,7 +19,7 @@ edge_weight = 1 ./ sqrt.(sum((Q' * X).^2, dims = 2)[:])
 distDAG = eigDAG_Distance(𝚽, Q, N; edge_weight = edge_weight) #52.375477 seconds
 Gstar_Sig = dualgraph(distDAG)
 G_Sig = GraphSig(W, xy = X); G_Sig = Adj2InvEuc(G_Sig)
-GP_dual = partition_tree_fiedler(Gstar_Sig, :Lrw, false)
+GP_dual = partition_tree_fiedler(Gstar_Sig; swapRegion = false)
 GP_primal = pairclustering(𝚽, GP_dual)
 
 @time PC_NGWP = pc_ngwp(𝚽, GP_dual, GP_primal) #119.590168 seconds (12.14 M allocations: 158.035 GiB, 13.89% gc time)
