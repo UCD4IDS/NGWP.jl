@@ -42,7 +42,10 @@ function eigTSD_Distance(P::Matrix{Float64}, 𝚽::Matrix{Float64}, 𝛌::Vector
 end
 
 """
-    K_functional(𝐩, 𝐪, 𝚽, 𝛌, Q, L; m = :Inf, dt = 0.1, tol = 1e-5)
+    K_functional(𝐩::Vector{Float64}, 𝐪::Vector{Float64}, 𝚽::Matrix{Float64},
+                        ∇𝚽::Matrix{Float64}, 𝛌::Vector{Float64}, L::Matrix{Int};
+                        length::Any = 1, T::Any = :Inf, dt::Float64 = 0.1,
+                        tol::Float64 = 1e-5)
 
 computes the K_functional between two vector meassures 𝐩 and 𝐪 on a graph.
 
