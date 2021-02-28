@@ -35,7 +35,7 @@ function eigTSD_Distance(P::Matrix{Float64}, 𝚽::Matrix{Float64}, 𝛌::Vector
     ∇𝚽 = Q' * 𝚽
 
     for i = 1:(ncols - 1), j = (i + 1):ncols
-        dis[i, j] = K_functional(P[:, i], P[:, j], ∇𝚽, 𝛌, L; length = length,
+        dis[i, j] = K_functional(P[:, i], P[:, j], 𝚽, ∇𝚽, 𝛌, L; length = length,
                                     T = T, dt = dt, tol = tol)[1]
     end
     return dis + dis'
@@ -49,6 +49,7 @@ computes the K_functional between two vector meassures 𝐩 and 𝐪 on a graph.
 # Input Argument
 - `𝐩::Vector{Float64}`: the source vector measure.
 - `𝐪::Vector{Float64}`: the destination vector measure.
+- `𝚽::Matrix{Float64}`: matrix of the unweighted graph Laplacian eigenvectors.
 - `∇𝚽::Matrix{Float64}`: gradient of unweighted graph Laplacian eigenvectors.
 - `𝛌::Vector{Float64}`: vector of eigenvalues.
 - `L::Matrix{Int}`: the unweighted graph Laplacian matrix.
@@ -62,9 +63,10 @@ computes the K_functional between two vector meassures 𝐩 and 𝐪 on a graph.
 - `t::Float64`: the actual stopping time
 
 """
-function K_functional(𝐩::Vector{Float64}, 𝐪::Vector{Float64}, ∇𝚽::Matrix{Float64},
-                        𝛌::Vector{Float64}, L::Matrix{Int}; length::Any = 1,
-                        T::Any = :Inf, dt::Float64 = 0.1, tol::Float64 = 1e-5)
+function K_functional(𝐩::Vector{Float64}, 𝐪::Vector{Float64}, 𝚽::Matrix{Float64},
+                        ∇𝚽::Matrix{Float64}, 𝛌::Vector{Float64}, L::Matrix{Int};
+                        length::Any = 1, T::Any = :Inf, dt::Float64 = 0.1,
+                        tol::Float64 = 1e-5)
     if abs(sum(𝐩 - 𝐪)) > 10^4 * eps()
         @error("𝐩 and 𝐪 do not have the same total mass.")
     end
