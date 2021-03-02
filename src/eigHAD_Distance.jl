@@ -34,7 +34,7 @@ function eigHAD_Distance_neglog(𝚽, 𝛌; indexEigs = 1:size(𝚽,2))
 end
 
 """
-    eigHAD_Affinity(𝚽,𝛌,numEigs)
+    eigHAD_Affinity(𝚽, 𝛌; indexEigs = 1:size(𝚽,2))
 
 EIGHAD_AFFINITY compute Hadamard (HAD) affinity between pairwise graph Laplacian eigenvectors.
 
