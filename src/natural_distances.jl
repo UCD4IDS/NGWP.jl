@@ -26,13 +26,13 @@ function natural_eigdist(𝚽, 𝛌, Q; α = 1.0, T = :Inf, dt = 0.01,
                          input_format = :zero_measures, distance = :DAG,
                          edge_weight = 1, edge_length = 1)
     N = size(Q, 1)
+    P = deepcopy(𝚽)
     if input_format == :zero_measures
-        P = 𝚽
         P[:, 1] .= 0
     elseif input_format == :pmf1
-        P = 𝚽.^2
+        P = P.^2
     elseif input_format == :pmf2
-        P = exp.(𝚽) ./ sum(exp.(𝚽), dims = 1)
+        P = exp.(P) ./ sum(exp.(P), dims = 1)
     else
         @error("input_format does not support $(input_format)!")
         return
