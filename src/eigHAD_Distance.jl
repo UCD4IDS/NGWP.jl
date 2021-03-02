@@ -1,34 +1,26 @@
-using Optim
-
 """
-    eigHAD_Distance(𝛷,lamb,numEigs)
+    eigHAD_Distance(𝚽, 𝛌; indexEigs = 1:size(𝚽,2))
 
-EIGHAD\\_DISTANCE compute HAD "distance" (not really a distance) between pairwise graph Laplacian eigenvectors, i.e., d_HAD(𝜙ᵢ₋₁, 𝜙ⱼ₋₁) = 1/a_HAD(𝜙ᵢ₋₁, 𝜙ⱼ₋₁).
+compute HAD "distance" (not really a distance) between pairwise graph Laplacian
+eigenvectors, i.e., d_HAD(𝜙ᵢ₋₁, 𝜙ⱼ₋₁) = √(1 - a_HAD(𝜙ᵢ₋₁, 𝜙ⱼ₋₁)²).
 
 # Input Arguments
-- `𝛷::Matrix{Float64}`: matrix of graph Laplacian eigenvectors, 𝜙ⱼ₋₁ (j = 1,...,size(𝛷,1)).
-- `lamb::Array{Float64}`: array of eigenvalues. (ascending order)
+- `𝚽::Matrix{Float64}`: matrix of graph Laplacian eigenvectors, 𝜙ⱼ₋₁ (j = 1,...,size(𝚽,1)).
+- `𝛌::Array{Float64}`: array of eigenvalues. (ascending order)
 - `indexEigs::Int`: default is all eigenvectors, indices of eigenvectors considered.
 
 # Output Argument
-- `dis::Matrix{Float64}`: a numEigs x numEigs affinity matrix, dis[i,j] = d_HAD(𝜙ᵢ₋₁, 𝜙ⱼ₋₁).
+- `dis::Matrix{Float64}`: the HAD distance matrix, dis[i,j] = d_HAD(𝜙ᵢ₋₁, 𝜙ⱼ₋₁).
 """
-function eigHAD_Distance(𝛷, lamb; indexEigs = 1:size(𝛷,2))
-    A = eigHAD_Affinity(𝛷, lamb; indexEigs = indexEigs)
-    n = size(A,1)
-    dis = zeros(n,n)
-    for i = 1:n, j = 1:n
-        if A[i,j] == 0
-            dis[i,j] = 1e9
-        else
-            dis[i,j] = 1/A[i,j]
-        end
-    end
+function eigHAD_Distance(𝚽, 𝛌; indexEigs = 1:size(𝚽,2))
+    A = eigHAD_Affinity(𝚽, 𝛌; indexEigs = indexEigs)
+    dis = sqrt.(ones(N, N) - A.^2)
+    dis[diagind(dis)] .= 0
     return dis
 end
 
-function eigHAD_Distance_neglog(𝛷, lamb; indexEigs = 1:size(𝛷,2))
-    A = eigHAD_Affinity(𝛷, lamb; indexEigs = indexEigs)
+function eigHAD_Distance_neglog(𝚽, 𝛌; indexEigs = 1:size(𝚽,2))
+    A = eigHAD_Affinity(𝚽, 𝛌; indexEigs = indexEigs)
     n = size(A,1)
     dis = zeros(n,n)
     for i = 1:n, j = 1:n
@@ -42,36 +34,36 @@ function eigHAD_Distance_neglog(𝛷, lamb; indexEigs = 1:size(𝛷,2))
 end
 
 """
-    eigHAD_Affinity(𝛷,lamb,numEigs)
+    eigHAD_Affinity(𝚽,𝛌,numEigs)
 
 EIGHAD_AFFINITY compute Hadamard (HAD) affinity between pairwise graph Laplacian eigenvectors.
 
 # Input Arguments
-- `𝛷::Matrix{Float64}`: matrix of graph Laplacian eigenvectors, 𝜙ⱼ₋₁ (j = 1,...,size(𝛷,1)).
-- `lamb::Array{Float64}`: array of eigenvalues. (ascending order)
+- `𝚽::Matrix{Float64}`: matrix of graph Laplacian eigenvectors, 𝜙ⱼ₋₁ (j = 1,...,size(𝚽,1)).
+- `𝛌::Array{Float64}`: array of eigenvalues. (ascending order)
 - `indexEigs::Int`: default is all eigenvectors, indices of eigenvectors considered.
 
 # Output Argument
 - `A::Matrix{Float64}`: a numEigs x numEigs affinity matrix, A[i,j] = a_HAD(𝜙ᵢ₋₁, 𝜙ⱼ₋₁).
 """
-function eigHAD_Affinity(𝛷, lamb; indexEigs = 1:size(𝛷,2))
-    N, numEigs = size(𝛷,1), length(indexEigs)
+function eigHAD_Affinity(𝚽, 𝛌; indexEigs = 1:size(𝚽,2))
+    N, numEigs = size(𝚽,1), length(indexEigs)
     indNoDC = setdiff(indexEigs, 1) # get rid of DC component
     J = length(indNoDC)
     A = zeros(J, J)
     for a in 1:J, b in a:J
         i, j = indNoDC[a], indNoDC[b]
-        hadamardProd = 𝛷[:,i] .* 𝛷[:,j]
+        hadamardProd = 𝚽[:,i] .* 𝚽[:,j]
         if norm(hadamardProd,2) < 0.01/sqrt(N)
             continue
         end
-        λ, μ = lamb[i], lamb[j]
+        λ, μ = 𝛌[i], 𝛌[j]
         x₀ = 1 ./ (max(λ, μ))
         # Find minimizer t
         result = optimize(t -> abs(exp(-t[1]*λ) + exp(-t[1]*μ) - 1), [x₀], BFGS());
         t = Optim.minimizer(result)[1]
         # Compute Hadamard affinity
-        heatEvolution = 𝛷 * Diagonal(exp.(-t .* lamb)) * 𝛷' * hadamardProd
+        heatEvolution = 𝚽 * Diagonal(exp.(-t .* 𝛌)) * 𝚽' * hadamardProd
         A[a,b] = norm(heatEvolution,2) / (norm(hadamardProd,2) + 1e-6)
     end
     A = A + A'; for i in 1:J; A[i,i] /= 2; end
