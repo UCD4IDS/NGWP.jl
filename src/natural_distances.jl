@@ -50,7 +50,7 @@ function natural_eigdist(𝚽, 𝛌, Q; α = 1.0, T = :Inf, dt = 0.01,
     elseif distance == :TSD
         L = Q * Q'
         t𝛌, t𝚽 = eigen(Matrix(L))
-        D = eigTSD_Distance(P, t𝚽, t𝛌, Q, L; length = edge_length, T = T, dt = dt)
+        D = eigTSD_Distance(P, t𝚽, t𝛌, Q; length = edge_length, T = T, dt = dt)
     else
         error("distance does not $(distance)!")
         return
