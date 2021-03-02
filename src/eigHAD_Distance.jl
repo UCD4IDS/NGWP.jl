@@ -13,8 +13,9 @@ eigenvectors, i.e., d_HAD(𝜙ᵢ₋₁, 𝜙ⱼ₋₁) = √(1 - a_HAD(𝜙ᵢ�
 - `dis::Matrix{Float64}`: the HAD distance matrix, dis[i,j] = d_HAD(𝜙ᵢ₋₁, 𝜙ⱼ₋₁).
 """
 function eigHAD_Distance(𝚽, 𝛌; indexEigs = 1:size(𝚽,2))
+    n = length(indexEigs)
     A = eigHAD_Affinity(𝚽, 𝛌; indexEigs = indexEigs)
-    dis = sqrt.(ones(N, N) - A.^2)
+    dis = sqrt.(ones(n, n) - A.^2)
     dis[diagind(dis)] .= 0
     return dis
 end
