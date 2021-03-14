@@ -1,7 +1,7 @@
 """
     eigTSD_Distance(P::Matrix{Float64}, 𝚽::Matrix{Float64}, 𝛌::Vector{Float64},
                     Q::SparseMatrixCSC{Int64,Int64}; length::Any = 1,
-                    T::Any = :Inf, dt::Float64 = 0.1, tol::Float64 = 1e-5)
+                    T::Any = :Inf, dt::Float64 = 0.5/maximum(𝛌), tol::Float64 = 1e-5)
 
 computes the TSD distance matrix of P's column vectors on a graph.
 
@@ -12,7 +12,7 @@ computes the TSD distance matrix of P's column vectors on a graph.
 - `Q::SparseMatrixCSC{Int64,Int64}`: the unweighted incidence matrix.
 - `length::Any`: vector of edge lengths (default: `1` represents unweighted graphs)
 - `T::Any`: the stopping time T in K_functional (default: `:Inf`)
-- `dt::Float64`: the time increment in the integral of K_functional (default: `0.1`)
+- `dt::Float64`: the time increment in the integral of K_functional (default: `0.5/maximum(𝛌)`)
 - `tol::Float64`: tolerance for convergence (default: `1e-5`)
 
 # Output Argument
@@ -21,7 +21,7 @@ computes the TSD distance matrix of P's column vectors on a graph.
 """
 function eigTSD_Distance(P::Matrix{Float64}, 𝚽::Matrix{Float64}, 𝛌::Vector{Float64},
                          Q::SparseMatrixCSC{Int64,Int64}; length::Any = 1,
-                         T::Any = :Inf, dt::Float64 = 0.1, tol::Float64 = 1e-5)
+                         T::Any = :Inf, dt::Float64 = 0.5/maximum(𝛌), tol::Float64 = 1e-5)
     N, ncols = Base.size(P)
     total_mass = sum(P, dims = 1)[:]
     if norm(total_mass - total_mass[1] * ones(ncols), Inf) > 10^4 * eps()
@@ -43,7 +43,7 @@ end
 """
     K_functional(𝐩::Vector{Float64}, 𝐪::Vector{Float64}, 𝚽::Matrix{Float64},
                  ∇𝚽::Matrix{Float64}, 𝛌::Vector{Float64}; length::Any = 1,
-                 T::Any = :Inf, dt::Float64 = 0.1, tol::Float64 = 1e-5)
+                 T::Any = :Inf, dt::Float64 = 0.5/maximum(𝛌), tol::Float64 = 1e-5)
 
 computes the K_functional between two vector meassures 𝐩 and 𝐪 on a graph.
 
@@ -55,7 +55,7 @@ computes the K_functional between two vector meassures 𝐩 and 𝐪 on a graph.
 - `𝛌::Vector{Float64}`: vector of eigenvalues.
 - `length::Any`: vector of edge lengths (default: 1 represents unweighted graphs)
 - `T::Any`: the stopping time T in K_functional (default: :Inf)
-- `dt::Float64`: time increment (default: 0.1)
+- `dt::Float64`: time increment (default: `0.5/maximum(𝛌)`)
 - `tol::Float64`: tolerance for convergence (default: 1e-5)
 
 # Output Argument
@@ -65,7 +65,7 @@ computes the K_functional between two vector meassures 𝐩 and 𝐪 on a graph.
 """
 function K_functional(𝐩::Vector{Float64}, 𝐪::Vector{Float64}, 𝚽::Matrix{Float64},
                         ∇𝚽::Matrix{Float64}, 𝛌::Vector{Float64}; length::Any = 1,
-                        T::Any = :Inf, dt::Float64 = 0.1, tol::Float64 = 1e-5)
+                        T::Any = :Inf, dt::Float64 = 0.5/maximum(𝛌), tol::Float64 = 1e-5)
     if abs(sum(𝐩 - 𝐪)) > 10^4 * eps()
         @error("𝐩 and 𝐪 do not have the same total mass.")
     end
