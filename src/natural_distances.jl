@@ -1,5 +1,5 @@
 """
-    natural_eigdist(𝚽, 𝛌, Q; α = 1.0, T = :Inf, dt = 0.5/maximum(𝛌),
+    natural_eigdist(𝚽, 𝛌, Q; α = 1.0, T = :Inf,
                     input_format = :zero_measures, distance = :DAG,
                     edge_weight = 1, edge_length = 1)
 
@@ -11,7 +11,6 @@ compute natural distances between graph Laplacian eigenvectors.
 - `Q::Matrix{Float64}`: unweighted incidence matrix of the graph.
 - `α::Float64`: ROT parameter. (default: `1.0`)
 - `T::Any`: TSD parameter, i.e., the stopping time T in K_functional (default: `:Inf`)
-- `dt::Float64`: TSD parameter, i.e., the time increment (default: `0.5/maximum(𝛌)`)
 - `input_format::Symbol`: options: `:zero_measures`, `:pmf1` and `:pmf2` (default: `:zero_measures`)
 - `distance::Symbol`: options: `:ROT`, `:HAD`, `:DAG` and `:TSD` (default: `:DAG`)
 - `edg_length::Any`: vector of edge lengths (default: 1 represents unweighted graphs)
@@ -22,7 +21,7 @@ compute natural distances between graph Laplacian eigenvectors.
 - `dis::Matrix{Float64}`: the distance matrix, dis[i,j] = d(𝜙ᵢ₋₁, 𝜙ⱼ₋₁).
 
 """
-function natural_eigdist(𝚽, 𝛌, Q; α = 1.0, T = :Inf, dt = 0.5/maximum(𝛌),
+function natural_eigdist(𝚽, 𝛌, Q; α = 1.0, T = :Inf,
                          input_format = :zero_measures, distance = :DAG,
                          edge_weight = 1, edge_length = 1)
     N = size(Q, 1)
@@ -47,7 +46,7 @@ function natural_eigdist(𝚽, 𝛌, Q; α = 1.0, T = :Inf, dt = 0.5/maximum(�
     elseif distance == :TSD
         tL = Q * Q'
         t𝛌, t𝚽 = eigen(Matrix(tL))
-        D = eigTSD_Distance(P, t𝚽, t𝛌, Q; length = edge_length, T = T, dt = dt)
+        D = eigTSD_Distance(P, t𝚽, t𝛌, Q; length = edge_length, T = T)
     else
         error("distance does not support $(distance)!")
         return
