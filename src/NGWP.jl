@@ -26,7 +26,7 @@ export pc_ngwp, pairclustering
 export vm_ngwp
 export ngwp_analysis, ngwp_bestbasis, NGWP_jkl
 export scatter_gplot, scatter_gplot!, wiggle, wiggle!
-export spike, characteristic, sort_wavelets, transform2D
+export spike, characteristic, χ, sort_wavelets, transform2D
 export getall_expansioncoeffs, approx_error_plot
 
 end

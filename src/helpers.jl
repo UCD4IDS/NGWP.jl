@@ -56,6 +56,12 @@ function characteristic(list, N)
     return v
 end
 
+function χ(list, N)
+    v = zeros(N)
+    v[list] .= 1.0
+    return v
+end
+
 
 """
     heat_sol(f0,𝚽,Σ,t)
