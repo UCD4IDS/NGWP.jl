@@ -184,6 +184,7 @@ function meyer_ngwp(𝚽, W_dual, GP_dual; ϵ = 0.2)
 end
 
 function const_meyer_wavelets(𝚽, Uf; idx = 1:size(Uf, 1))
+    N = size(𝚽, 1)
     # assemble smooth orthogonal projector
     P = Uf' * Diagonal(χ(idx, N)) * Uf
     if diag(P) == χ(idx, N)
