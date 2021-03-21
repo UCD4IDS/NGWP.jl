@@ -58,11 +58,14 @@ function find_pairinds(W; ϵ::Float64 = 0.2, idx = 1:size(W, 1))
     pos_active_region = (Int64)[]
     neg_active_region = (Int64)[]
 
+    tol = 10^3 * eps()
+    tol *= ((sum(v .>= tol) > sum(v .<= -tol)) * 2 - 1)
+
     for i in 1:N
-        if 0 < v[i] < ϵ * vmax
+        if tol <= v[i] < ϵ * vmax
             push!(pos_active_region, i)
         end
-        if -ϵ * vmax < v[i] < 0
+        if -ϵ * vmax < v[i] < tol
             push!(neg_active_region, i)
         end
     end
