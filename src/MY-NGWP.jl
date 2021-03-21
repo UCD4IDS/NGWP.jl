@@ -29,6 +29,13 @@ function Lrw_eigenvec(W; nev = 6)
     vtmp ./= sqrt.(sum(vtmp.^2; dims = 1))
     vtmp *= Diagonal(1 .- (vtmp[1, :] .< 0) .* 2)
     return round.(vtmp; digits = 15)
+    # deg = sum(W, dims = 1)[:]  # weighted degree vector
+    # Lsym = diagm(deg.^(-1/2)) * (diagm(deg) - W) * diagm(deg.^(-1/2))
+    # 𝛌sym, 𝚽sym = eigen(Lsym)
+    # 𝚽rw = diagm(deg.^(-1/2)) * 𝚽sym
+    # 𝚽rw ./= sqrt.(sum(𝚽rw.^2; dims = 1))
+    # 𝚽rw *= Diagonal(1 .- (𝚽rw[1, :] .< 0) .* 2)
+    # return round.(𝚽rw[:, 2:nev]; digits = 15)
 end
 
 function sortnodes_inmargin(active_region, Na, v, W, idx; sign = :positive)
@@ -73,9 +80,37 @@ function find_pairinds(W; ϵ::Float64 = 0.2, idx = 1:size(W, 1))
     return pair_inds, v
 end
 
+function pair_inds_shadding(W, GP; ϵ = 0.2, J = 1)
+    rs = GP.rs
+    inds = GP.inds
+    (N, jmax) = Base.size(inds)
+
+    shading = zeros(N)
+    for j = 1:J
+        regioncount = count(!iszero, rs[:, j]) - 1
+        for r = 1:regioncount
+            indr = rs[r, j]:(rs[r + 1, j] - 1)
+            pair_inds = find_pairinds(W; ϵ = ϵ, idx = inds[indr, j])[1]
+            for i in 1:size(pair_inds, 2)
+                pv, nv = pair_inds[:, i]
+                if shading[pv] == 0
+                    shading[pv] = J + 3 - j
+                end
+                if shading[nv] == 0
+                    shading[nv] = -(J + 3 - j)
+                end
+            end
+        end
+    end
+    return shading
+end
+
+
+
 function keep_folding!(U, used_node, W, GP; ϵ = 0.2, j = 1)
     rs = GP.rs
-    N = Base.size(rs, 1) - 1
+    inds = GP.inds
+    N = Base.size(inds, 1)
 
     regioncount = count(!iszero, rs[:, j]) - 1
     for r = 1:regioncount
@@ -83,7 +118,7 @@ function keep_folding!(U, used_node, W, GP; ϵ = 0.2, j = 1)
         if length(indr) == 1
             continue
         end
-        pair_inds, v = find_pairinds(W; ϵ = ϵ, idx = indr)
+        pair_inds, v = find_pairinds(W; ϵ = ϵ, idx = inds[indr, j])
         vmax = norm(v, Inf)
         for i in 1:size(pair_inds, 2)
             pv, nv = pair_inds[:, i]
@@ -93,8 +128,8 @@ function keep_folding!(U, used_node, W, GP; ϵ = 0.2, j = 1)
             # use the half distance between the 1D embeddings,
             # i.e., t = const⋅(v[pv] - v[nv] / 2), to compute the rising
             # cutoff function, which satisfy r(t)^2 + r(-t)^2 = 1
-            t = (v[findfirst(indr .== pv)] - v[findfirst(indr .== nv)]) / (2 * ϵ * vmax)
-            # t = v[findfirst(indr .== pv)] / (ϵ * vmax)
+            t = (v[findfirst(inds[indr, j] .== pv)] - v[findfirst(inds[indr, j] .== nv)]) / (2 * ϵ * vmax)
+            # t = v[findfirst(inds[indr, j] .== pv)] / (ϵ * vmax)
             U[pv, pv] = rising_cutoff(t)
             U[pv, nv] = rising_cutoff(-t)
             U[nv, nv] = rising_cutoff(t)
@@ -142,7 +177,7 @@ function meyer_ngwp(𝚽, W_dual, GP_dual; ϵ = 0.2)
         for r = 1:regioncount
             indr = rs[r, j]:(rs[r + 1, j] - 1)
             GP_dual.tag[indr, j] = Vector{Int}(0:(length(indr) - 1))
-            wavelet_packet[indr, j, :] = const_meyer_wavelets(𝚽, Uf; idx = indr)'
+            wavelet_packet[indr, j, :] = const_meyer_wavelets(𝚽, Uf; idx = inds[indr, j])'
         end
     end
     return wavelet_packet
