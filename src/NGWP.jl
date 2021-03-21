@@ -3,7 +3,7 @@ __precompile__()
 module NGWP
 
 using LinearAlgebra, SparseArrays, LightGraphs, SimpleWeightedGraphs, Clustering
-using JuMP, Clp, Optim, OptimalTransport, MTSG, Statistics, QuadGK
+using JuMP, Clp, Optim, OptimalTransport, MTSG, Statistics, QuadGK, Arpack
 import Plots: plot, plot!, scatter, scatter!
 import StatsBase: crosscor
 

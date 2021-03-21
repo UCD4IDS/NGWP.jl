@@ -1,9 +1,10 @@
 name = "NGWP"
 uuid = "b1502bba-cf73-4b59-9b37-fa50c4aa0169"
 authors = ["Haotian Li"]
-version = "0.4.4"
+version = "0.4.5"
 
 [deps]
+Arpack = "7d9fca2a-8960-54d3-9f78-7d1dccf2cb97"
 Clp = "e2554f3b-3117-50c0-817c-e040a3ddf72d"
 Clustering = "aaaa29a8-35af-508c-8bc3-b662a17a0fe5"
 JLD = "4138dd39-2aa7-5051-a626-17a0bb65d9c8"
