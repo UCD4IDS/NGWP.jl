@@ -1,0 +1,165 @@
+function rising_cutoff(t)
+    r = 0
+    if t <= -1
+        r = 0
+    elseif t >= 1
+        r = 1
+    else
+        r = sin(π / 4 * (1 + sin(π / 2 * t)))
+    end
+    return r
+end
+
+function standardize_fiedler(v)
+    v1 = deepcopy(v)
+    v1 ./= norm(v1, 2)
+    if v1[1] < 0
+        v1 = -v1
+    end
+    return round.(v1; digits = 15)
+end
+
+
+function Lrw_eigenvec(W; nev = 6)
+    N = size(W, 1)
+    D = Diagonal(sum(W, dims = 1)[:])
+    val, vtmp = eigs(D - W, D,
+                     nev = nev, sigma = eps(), v0 = ones(N) / sqrt(N))
+    vtmp = vtmp[:, sortperm(val)[2:end]]
+    vtmp ./= sqrt.(sum(vtmp.^2; dims = 1))
+    vtmp *= Diagonal(1 .- (vtmp[1, :] .< 0) .* 2)
+    return round.(vtmp; digits = 15)
+end
+
+function sortnodes_inmargin(active_region, Na, v, W, idx; sign = :positive)
+    ind = sortperm(v[active_region]; rev = (sign == :positive))[(end - Na + 1):end]
+    # if there is a tie, use the more dims eigenmaps and sort by lexical order
+    if length(unique(v[ind])) < Na
+        emb = Lrw_eigenvec(W[idx, idx]; nev = min(6, length(idx)))'
+        emb_tp = [Tuple(emb[:, i]) for i in 1:length(idx)]
+        ind = sortperm(emb_tp[active_region]; rev = (sign == :positive))[(end - Na + 1):end]
+    end
+    return ind
+end
+
+
+function find_pairinds(W; ϵ::Float64 = 0.2, idx = 1:size(W, 1))
+    v = partition_fiedler(W[idx, idx])[2]
+    v = standardize_fiedler(v)
+    vmax = norm(v, Inf)
+    N = length(v)
+    pos_active_region = (Int64)[]
+    neg_active_region = (Int64)[]
+
+    for i in 1:N
+        if 0 < v[i] < ϵ * vmax
+            push!(pos_active_region, i)
+        end
+        if -ϵ * vmax < v[i] < 0
+            push!(neg_active_region, i)
+        end
+    end
+    Np = length(pos_active_region)
+    Nn = length(neg_active_region)
+    Na = min(Nn, Np)  # number of pair inds in action region
+
+    # indp = sortperm(v[pos_active_region]; rev = true)[(end - Na + 1):end]
+    # indn = sortperm(v[neg_active_region])[(end - Na + 1):end]
+    indp = sortnodes_inmargin(pos_active_region, Na, v, W, idx; sign = :positive)
+    indn = sortnodes_inmargin(neg_active_region, Na, v, W, idx; sign = :negative)
+    pair_inds = vcat(idx[pos_active_region[indp]]',
+                     idx[neg_active_region[indn]]')
+
+    return pair_inds, v
+end
+
+function keep_folding!(U, used_node, W, GP; ϵ = 0.2, j = 1)
+    rs = GP.rs
+    N = Base.size(rs, 1) - 1
+
+    regioncount = count(!iszero, rs[:, j]) - 1
+    for r = 1:regioncount
+        indr = rs[r, j]:(rs[r + 1, j] - 1)
+        if length(indr) == 1
+            continue
+        end
+        pair_inds, v = find_pairinds(W; ϵ = ϵ, idx = indr)
+        vmax = norm(v, Inf)
+        for i in 1:size(pair_inds, 2)
+            pv, nv = pair_inds[:, i]
+            if pv ∈ used_node || nv ∈ used_node
+                continue
+            end
+            # use the half distance between the 1D embeddings,
+            # i.e., t = const⋅(v[pv] - v[nv] / 2), to compute the rising
+            # cutoff function, which satisfy r(t)^2 + r(-t)^2 = 1
+            t = (v[findfirst(indr .== pv)] - v[findfirst(indr .== nv)]) / (2 * ϵ * vmax)
+            # t = v[findfirst(indr .== pv)] / (ϵ * vmax)
+            U[pv, pv] = rising_cutoff(t)
+            U[pv, nv] = rising_cutoff(-t)
+            U[nv, nv] = rising_cutoff(t)
+            U[nv, pv] = -rising_cutoff(-t)
+        end
+        union!(used_node, Set(pair_inds[:]))
+    end
+end
+
+
+function unitary_folding_operator(W, GP; ϵ = 0.2, J = 1)
+    rs = GP.rs
+    inds = GP.inds
+    (N, jmax) = Base.size(inds)
+
+    U = Matrix{Float64}(I, N, N)
+    used_node = Set()
+
+    for j = 1:J
+        keep_folding!(U, used_node, W, GP; ϵ = ϵ, j = j)
+    end
+
+    return U
+end
+
+
+
+function meyer_ngwp(𝚽, W_dual, GP_dual; ϵ = 0.2)
+    rs = GP_dual.rs
+    inds = GP_dual.inds
+    (N, jmax) = Base.size(inds)
+
+    GP_dual.tag = zeros(Int, N, jmax)
+    GP_dual.tag[:, 1] = Vector{Int}(0:(N - 1))
+
+    Uf = Matrix{Float64}(I, N, N)
+    used_node = Set()
+
+    wavelet_packet = zeros(N, jmax, N)
+    wavelet_packet[:, 1, :] = Matrix{Float64}(I, N, N)
+    for j = 2:jmax
+        regioncount = count(!iszero, rs[:, j]) - 1
+        # Uf = unitary_folding_operator(W_dual, GP_dual; ϵ = ϵ, J = j - 1)
+        keep_folding!(Uf, used_node, W_dual, GP_dual; ϵ = ϵ, j = j - 1)
+        for r = 1:regioncount
+            indr = rs[r, j]:(rs[r + 1, j] - 1)
+            GP_dual.tag[indr, j] = Vector{Int}(0:(length(indr) - 1))
+            wavelet_packet[indr, j, :] = const_meyer_wavelets(𝚽, Uf; idx = indr)'
+        end
+    end
+    return wavelet_packet
+end
+
+function const_meyer_wavelets(𝚽, Uf; idx = 1:size(Uf, 1))
+    # assemble smooth orthogonal projector
+    P = Uf' * Diagonal(χ(idx, N)) * Uf
+    if diag(P) == χ(idx, N)
+        B = 𝚽[:, idx]
+    else
+        # folding the eigenspace, i.e., 𝚽's column space
+        Ω = 𝚽 * P
+        # find its column space's orthogonal basis
+        B = svd(Ω[:, idx]).U
+    end
+    # perform varimax rotation to get the meyer_wavelets
+    Wavelets = varimax(B)
+    return Wavelets
+end

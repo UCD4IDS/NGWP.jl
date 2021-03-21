@@ -1,7 +1,7 @@
 name = "NGWP"
 uuid = "b1502bba-cf73-4b59-9b37-fa50c4aa0169"
 authors = ["Haotian Li"]
-version = "0.3.2"
+version = "0.4.0"
 
 [deps]
 Clp = "e2554f3b-3117-50c0-817c-e040a3ddf72d"
