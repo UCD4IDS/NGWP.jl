@@ -88,6 +88,7 @@ function pair_inds_shadding(W, GP; ϵ = 0.2, J = 1)
     inds = GP.inds
     (N, jmax) = Base.size(inds)
 
+    used_node = Set()
     shading = zeros(N)
     for j = 1:J
         regioncount = count(!iszero, rs[:, j]) - 1
@@ -96,6 +97,9 @@ function pair_inds_shadding(W, GP; ϵ = 0.2, J = 1)
             pair_inds = find_pairinds(W; ϵ = ϵ, idx = inds[indr, j])[1]
             for i in 1:size(pair_inds, 2)
                 pv, nv = pair_inds[:, i]
+                if pv ∈ used_node || nv ∈ used_node
+                    continue
+                end
                 if shading[pv] == 0
                     shading[pv] = J + 3 - j
                 end
@@ -103,6 +107,7 @@ function pair_inds_shadding(W, GP; ϵ = 0.2, J = 1)
                     shading[nv] = -(J + 3 - j)
                 end
             end
+            union!(used_node, Set(pair_inds[:]))
         end
     end
     return shading
