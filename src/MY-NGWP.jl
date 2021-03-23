@@ -62,6 +62,9 @@ function find_pairinds(W; ϵ::Float64 = 0.2, idx = 1:size(W, 1), used_node = Set
     tol *= ((sum(v .>= tol) > sum(v .<= -tol)) * 2 - 1)
 
     for i in 1:N
+        if idx[i] ∈ used_node
+            continue
+        end
         if tol <= v[i] < ϵ * vmax
             push!(pos_active_region, i)
         end
@@ -69,8 +72,6 @@ function find_pairinds(W; ϵ::Float64 = 0.2, idx = 1:size(W, 1), used_node = Set
             push!(neg_active_region, i)
         end
     end
-    setdiff!(pos_active_region, used_node)
-    setdiff!(neg_active_region, used_node)
     Np = length(pos_active_region)
     Nn = length(neg_active_region)
     Na = min(Nn, Np)  # number of pair inds in action region
