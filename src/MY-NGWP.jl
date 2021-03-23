@@ -50,7 +50,7 @@ function sortnodes_inmargin(active_region, Na, v, W, idx; sign = :positive)
 end
 
 
-function find_pairinds(W; ϵ::Float64 = 0.2, idx = 1:size(W, 1))
+function find_pairinds(W; ϵ::Float64 = 0.2, idx = 1:size(W, 1), used_node = Set())
     v = partition_fiedler(W[idx, idx])[2]
     v = standardize_fiedler(v)
     vmax = norm(v, Inf)
@@ -69,6 +69,8 @@ function find_pairinds(W; ϵ::Float64 = 0.2, idx = 1:size(W, 1))
             push!(neg_active_region, i)
         end
     end
+    setdiff!(pos_active_region, used_node)
+    setdiff!(pos_negative_region, used_node)
     Np = length(pos_active_region)
     Nn = length(neg_active_region)
     Na = min(Nn, Np)  # number of pair inds in action region
@@ -94,12 +96,12 @@ function pair_inds_shadding(W, GP; ϵ = 0.2, J = 1)
         regioncount = count(!iszero, rs[:, j]) - 1
         for r = 1:regioncount
             indr = rs[r, j]:(rs[r + 1, j] - 1)
-            pair_inds = find_pairinds(W; ϵ = ϵ, idx = inds[indr, j])[1]
+            pair_inds = find_pairinds(W; ϵ = ϵ, idx = inds[indr, j], used_node = used_node)[1]
             for i in 1:size(pair_inds, 2)
                 pv, nv = pair_inds[:, i]
-                if pv ∈ used_node || nv ∈ used_node
-                    continue
-                end
+                # if pv ∈ used_node || nv ∈ used_node
+                #     continue
+                # end
                 if shading[pv] == 0
                     shading[pv] = J + 3 - j
                 end
@@ -126,7 +128,7 @@ function keep_folding!(U, used_node, W, GP; ϵ = 0.2, j = 1)
         if length(indr) == 1
             continue
         end
-        pair_inds, v = find_pairinds(W; ϵ = ϵ, idx = inds[indr, j])
+        pair_inds, v = find_pairinds(W; ϵ = ϵ, idx = inds[indr, j], used_node = used_node)
         vmax = norm(v, Inf)
         for i in 1:size(pair_inds, 2)
             pv, nv = pair_inds[:, i]
