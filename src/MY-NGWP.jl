@@ -140,8 +140,8 @@ function keep_folding!(U, used_node, W, GP; ϵ = 0.2, j = 1)
             # t = v[findfirst(inds[indr, j] .== pv)] / (ϵ * vmax)
             U[pv, pv] = rising_cutoff(t)
             U[pv, nv] = rising_cutoff(-t)
-            U[nv, nv] = rising_cutoff(t)
             U[nv, pv] = -rising_cutoff(-t)
+            U[nv, nv] = rising_cutoff(t)
         end
         union!(used_node, Set(pair_inds[:]))
     end
