@@ -70,7 +70,7 @@ function find_pairinds(W; ϵ::Float64 = 0.2, idx = 1:size(W, 1), used_node = Set
         end
     end
     setdiff!(pos_active_region, used_node)
-    setdiff!(pos_negative_region, used_node)
+    setdiff!(neg_active_region, used_node)
     Np = length(pos_active_region)
     Nn = length(neg_active_region)
     Na = min(Nn, Np)  # number of pair inds in action region
