@@ -42,8 +42,10 @@ function sortnodes_inmargin(active_region, Na, v, W, idx; sign = :positive)
     ind = sortperm(v[active_region]; rev = (sign == :positive))
     # if there is a tie, use the more dims eigenmaps and sort by lexical order
     if length(unique(v[ind])) < length(active_region)
-        emb = Lrw_eigenvec(W[idx, idx]; nev = min(6, length(idx)))'
-        emb_tp = [Tuple(emb[:, i]) for i in 1:length(idx)]
+        emb = Lrw_eigenvec(W[idx, idx]; nev = 2)'
+        # for the second dimension coordinate we sort
+        # the pos region and the neg region in the same order
+        emb_tp = [Tuple(emb[:, i] .* [1, (sign == :positive) * 2 - 1]) for i in 1:length(idx)]
         ind = sortperm(emb_tp[active_region]; rev = (sign == :positive))
     end
     return ind[(end - Na + 1):end]
