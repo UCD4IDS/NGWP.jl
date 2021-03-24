@@ -16,7 +16,7 @@ function standardize_fiedler(v)
     if v1[1] < 0
         v1 = -v1
     end
-    return round.(v1; digits = 15)
+    return round.(v1; digits = 14)
 end
 
 
@@ -28,7 +28,7 @@ function Lrw_eigenvec(W; nev = 6)
     vtmp = vtmp[:, sortperm(val)[2:end]]
     vtmp ./= sqrt.(sum(vtmp.^2; dims = 1))
     vtmp *= Diagonal(1 .- (vtmp[1, :] .< 0) .* 2)
-    return round.(vtmp; digits = 15)
+    return round.(vtmp; digits = 14)
     # deg = sum(W, dims = 1)[:]  # weighted degree vector
     # Lsym = diagm(deg.^(-1/2)) * (diagm(deg) - W) * diagm(deg.^(-1/2))
     # 𝛌sym, 𝚽sym = eigen(Lsym)
@@ -42,7 +42,7 @@ function sortnodes_inmargin(active_region, Na, v, W, idx; sign = :positive)
     ind = sortperm(v[active_region]; rev = (sign == :positive))
     # if there is a tie, use the more dims eigenmaps and sort by lexical order
     if length(unique(v[ind])) < length(active_region)
-        emb = Lrw_eigenvec(W[idx, idx]; nev = 2)'
+        emb = Lrw_eigenvec(W[idx, idx]; nev = 3)'
         # for the second dimension coordinate we sort
         # the pos region and the neg region in the same order
         emb_tp = [Tuple(emb[:, i] .* [1, (sign == :positive) * 2 - 1]) for i in 1:length(idx)]
