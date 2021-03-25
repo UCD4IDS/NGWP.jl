@@ -1,6 +1,6 @@
 println("Loading NGWP...")
 using NGWP
-using Test, JLD, MAT, Plots, LightGraphs, LinearAlgebra, SparseArrays
+using Test, JLD, MAT, Plots, LightGraphs, LinearAlgebra, SparseArrays, MTSG
 
 #####################################################
 # 1. Testing PC-NGWP and VM-NGWP on sunflower graph #
