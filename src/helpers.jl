@@ -478,3 +478,18 @@ function sort_wavelets(A; onlyByLoc = false)
     A = A * Diagonal(sgn)
     return A
 end
+
+
+function standardize_eigenvectors!(𝚽)
+    N, nev = size(𝚽)
+    tol = 10^3 * eps()
+    for l in 1:nev
+        𝛟max = maximum(𝚽[:, l])
+        𝛟min = minimum(𝚽[:, l])
+        if abs(𝛟max + 𝛟min) < tol
+            𝚽[:, l] *= (𝚽[1, l] > 0) * 2 - 1
+        elseif 𝛟max < -𝛟min
+            𝚽[:, l] *= -1
+        end
+    end
+end

@@ -25,10 +25,11 @@ export SunFlowerGraph, dualgraph
 export pc_ngwp, pairclustering
 export vm_ngwp, varimax
 export meyer_ngwp, rising_cutoff, find_pairinds, pair_inds_shadding
+export shglet
 export unitary_folding_operator
 export ngwp_analysis, ngwp_bestbasis, NGWP_jkl
 export scatter_gplot, scatter_gplot!, wiggle, wiggle!
-export spike, characteristic, χ, sort_wavelets, transform2D
+export standardize_eigenvectors!, spike, characteristic, χ, sort_wavelets, transform2D
 export getall_expansioncoeffs, approx_error_plot
 
 end
