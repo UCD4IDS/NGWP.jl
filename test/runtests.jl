@@ -8,9 +8,7 @@ using Test, JLD, MAT, Plots, LightGraphs, LinearAlgebra, SparseArrays, MTSG
 println("Testing NGWP on sunflower barbara eye signal")
 ## Build weighted sunflower graph for test
 G, L, X = SunFlowerGraph(N = 400); N = nv(G)
-𝛌, 𝚽 = eigen(Matrix(L))
-sgn = (maximum(𝚽, dims = 1)[:] .> -minimum(𝚽, dims = 1)[:]) .* 2 .- 1
-𝚽 = 𝚽 * Diagonal(sgn)
+𝛌, 𝚽 = eigen(Matrix(L)); standardize_eigenvectors!(𝚽)
 Q = incidence_matrix(G; oriented = true)
 W = 1.0 * adjacency_matrix(G)
 edge_weight = [e.weight for e in edges(G)]
@@ -19,7 +17,7 @@ edge_weight = [e.weight for e in edges(G)]
 distDAG = eigDAG_Distance(𝚽, Q, N; edge_weight = edge_weight)
 Gstar_Sig = dualgraph(distDAG)
 G_Sig = GraphSig(W, xy = X)
-GP_dual = partition_tree_fiedler(Gstar_Sig, :Lrw, false)
+GP_dual = partition_tree_fiedler(Gstar_Sig; swapRegion = false)
 GP_primal = pairclustering(𝚽, GP_dual);
 
 VM_NGWP = vm_ngwp(𝚽, GP_dual)
