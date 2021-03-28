@@ -41,8 +41,7 @@ end
 
 
 function const_shglet_jk(H, Uf; idx = 1:size(Uf, 1))
-    N = size(𝚽, 1)
     # assemble smooth orthogonal projector
-    P = Uf' * Diagonal(χ(idx, N)) * Uf
+    P = Uf[idx, :]' * Uf[idx, :]
     return P * H
 end
