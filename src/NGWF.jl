@@ -8,7 +8,7 @@ function nat_spec_filter(l, D; σ = 0.25 * maximum(D), method = :regular, thres 
     return 𝛍
 end
 
-function ngwf_all_vectors(D; σ = 0.2 * maximum(D))
+function ngwf_all_vectors(D, 𝚽; σ = 0.2 * maximum(D))
     N = size(D, 1)
     𝓤 = zeros(N, 0)
     for l = 1:N
@@ -19,7 +19,7 @@ function ngwf_all_vectors(D; σ = 0.2 * maximum(D))
     return 𝓤
 end
 
-function rngwf_all_vectors(D; σ = 0.2 * maximum(D), thres = 0.2)
+function rngwf_all_vectors(D, 𝚽; σ = 0.2 * maximum(D), thres = 0.2)
     N = size(D, 1)
     𝓤 = zeros(N, 0)
     dic_l2x = Dict()
@@ -32,7 +32,7 @@ function rngwf_all_vectors(D; σ = 0.2 * maximum(D), thres = 0.2)
     return 𝓤, dic_l2x
 end
 
-function ngwf_vector(D, l, x; σ = 0.1 * maximum(D))
+function ngwf_vector(D, l, x, 𝚽; σ = 0.1 * maximum(D))
     P = 𝚽 * diagm(nat_spec_filter(l, D; σ = σ)) * 𝚽'
     ψ = P * spike(x, N)
     ψ ./= norm(ψ, 2)
