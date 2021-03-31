@@ -9,6 +9,7 @@ function nat_spec_filter(l, D; σ = 0.25 * maximum(D), method = :regular, thres 
 end
 
 function ngwf_all_vectors(D; σ = 0.2 * maximum(D))
+    N = size(D, 1)
     𝓤 = zeros(N, 0)
     for l = 1:N
         𝛍 = nat_spec_filter(l, D; σ = σ)
@@ -19,6 +20,7 @@ function ngwf_all_vectors(D; σ = 0.2 * maximum(D))
 end
 
 function rngwf_all_vectors(D; σ = 0.2 * maximum(D), thres = 0.2)
+    N = size(D, 1)
     𝓤 = zeros(N, 0)
     dic_l2x = Dict()
     for l = 1:N
