@@ -33,6 +33,7 @@ function rngwf_all_vectors(D, 𝚽; σ = 0.2 * maximum(D), thres = 0.2)
 end
 
 function ngwf_vector(D, l, x, 𝚽; σ = 0.1 * maximum(D))
+    N = size(𝚽, 1)
     P = 𝚽 * diagm(nat_spec_filter(l, D; σ = σ)) * 𝚽'
     ψ = P * spike(x, N)
     ψ ./= norm(ψ, 2)
