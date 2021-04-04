@@ -26,7 +26,7 @@ export pc_ngwp, pairclustering
 export vm_ngwp, varimax
 export meyer_ngwp, rising_cutoff, find_pairinds, pair_inds_shadding
 export shglet
-export unitary_folding_operator
+export unitary_folding_operator, keep_folding!
 export ngwp_analysis, ngwp_bestbasis, NGWP_jkl
 export natural_eigdist, ngwf_all_vectors, rngwf_all_vectors, ngwf_vector, frame_approx, rngwf_lx
 export scatter_gplot, scatter_gplot!, wiggle, wiggle!
