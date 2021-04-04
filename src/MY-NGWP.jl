@@ -21,21 +21,30 @@ end
 
 
 function Lrw_eigenvec(W; nev = 6)
-    N = size(W, 1)
-    D = Diagonal(sum(W, dims = 1)[:])
-    val, vtmp = eigs(D - W, D,
-                     nev = nev, sigma = eps(), v0 = ones(N) / sqrt(N))
-    vtmp = vtmp[:, sortperm(val)[2:end]]
-    vtmp ./= sqrt.(sum(vtmp.^2; dims = 1))
-    vtmp *= Diagonal(1 .- (vtmp[1, :] .< 0) .* 2)
-    return round.(vtmp; digits = 14)
-    # deg = sum(W, dims = 1)[:]  # weighted degree vector
-    # Lsym = diagm(deg.^(-1/2)) * (diagm(deg) - W) * diagm(deg.^(-1/2))
-    # 𝛌sym, 𝚽sym = eigen(Lsym)
-    # 𝚽rw = diagm(deg.^(-1/2)) * 𝚽sym
-    # 𝚽rw ./= sqrt.(sum(𝚽rw.^2; dims = 1))
-    # 𝚽rw *= Diagonal(1 .- (𝚽rw[1, :] .< 0) .* 2)
-    # return round.(𝚽rw[:, 2:nev]; digits = 15)
+    # N = size(W, 1)
+    # D = Diagonal(sum(W, dims = 1)[:])
+    # try
+    #     val, vtmp = eigs(D - W, D,
+    #                      nev = nev, sigma = eps(), v0 = ones(N) / sqrt(N))
+    #     vtmp = vtmp[:, sortperm(val)[2:end]]
+    #     vtmp ./= sqrt.(sum(vtmp.^2; dims = 1))
+    #     vtmp *= Diagonal(1 .- (vtmp[1, :] .< 0) .* 2)
+    # catch
+    #
+    # return round.(vtmp; digits = 14)
+    deg = sum(W, dims = 1)[:]  # weighted degree vector
+    if minimum(deg) <= 10^3 * eps()
+        L = diagm(deg) - W
+        𝛌, 𝚽 = eigen(L)
+        standardize_eigenvector_signs!(𝚽)
+        return round.(𝚽[:, 2:nev]; digits = 14)
+    end
+    Lsym = diagm(deg.^(-1/2)) * (diagm(deg) - W) * diagm(deg.^(-1/2))
+    𝛌sym, 𝚽sym = eigen(Lsym)
+    𝚽rw = diagm(deg.^(-1/2)) * 𝚽sym
+    𝚽rw ./= sqrt.(sum(𝚽rw.^2; dims = 1))
+    𝚽rw *= Diagonal(1 .- (𝚽rw[1, :] .< 0) .* 2)
+    return round.(𝚽rw[:, 2:nev]; digits = 14)
 end
 
 function sortnodes_inmargin(active_region, Na, v, W, idx; sign = :positive)
@@ -124,7 +133,7 @@ function keep_folding!(U, used_node, W, GP; ϵ = 0.2, j = 1)
     if j == 0
         return U
     end
-    
+
     rs = GP.rs
     inds = GP.inds
     N = Base.size(inds, 1)
@@ -202,13 +211,13 @@ end
 
 function const_meyer_wavelets(𝚽, Uf; idx = 1:size(Uf, 1))
     N = size(𝚽, 1)
-    # assemble smooth orthogonal projector
-    P = Uf[idx, :]' * Uf[idx, :]
+    # assemble smooth orthogonal projector custom to nodes `idx`
+    P = Uf[idx, :]' * Uf[idx, idx]
     if diag(P) == χ(idx, N)
         B = 𝚽[:, idx]
     else
         # folding the eigenspace, i.e., 𝚽's column space
-        Y = 𝚽 * P[:, idx]
+        Y = 𝚽 * P
         # find its column space's orthogonal basis
         B = svd(Y).U
     end
