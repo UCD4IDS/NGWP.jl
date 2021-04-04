@@ -121,6 +121,10 @@ end
 
 
 function keep_folding!(U, used_node, W, GP; ϵ = 0.2, j = 1)
+    if j == 0
+        return U
+    end
+    
     rs = GP.rs
     inds = GP.inds
     N = Base.size(inds, 1)
