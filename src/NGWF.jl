@@ -59,7 +59,7 @@ function rngwf_lx(dic_l2x)
     Γ = (Tuple{Int64,Int64})[]
     for l = 1:N
         for x in dic_l2x[l]
-            push!(Γ, (l, x))
+            push!(Γ, (l - 1, x))
         end
     end
     return Γ
