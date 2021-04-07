@@ -6,7 +6,7 @@ G = LightGraphs.grid([Nx, Ny]); N = nv(G);
 L = Matrix(laplacian_matrix(G))
 Q = incidence_matrix(G; oriented = true)
 𝛌, 𝚽 = eigen(L); standardize_eigenvectors!(𝚽)
-C = floyd_warshall_shortest_paths(G).dists
+∇𝚽 = Q' * 𝚽
 W = 1.0 * adjacency_matrix(G)
 
 

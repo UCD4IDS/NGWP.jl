@@ -1,7 +1,7 @@
 cd(@__DIR__); include("setups/grid7x3.jl")
 pyplot(dpi = 200)
 
-#################### (a) eigenvectors by nondecreasing eigenvalue ordering
+## (a) eigenvectors by nondecreasing eigenvalue ordering
 plot(layout = Plots.grid(3, 7))
 for i in 1:N
     heatmap!(reshape(𝚽[:, i], (Nx, Ny))', c = :viridis, cbar = false,
@@ -12,7 +12,7 @@ end
 plt = current()
 savefig(plt, "../figs/grid7x3_evsp_title.png")
 
-#################### (b) eigenvectors by natural frequency ordering
+## (b) eigenvectors by natural frequency ordering
 plot(layout = Plots.grid(3, 7))
 for i in 1:N
     k = grid2eig_ind[i]
