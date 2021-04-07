@@ -1,4 +1,4 @@
-function shglet(𝚽, W, GP; ϵ = 0.3)
+function lphglet(𝚽, W, GP; ϵ = 0.3)
     rs = GP.rs
     inds = GP.inds
     (N, jmax) = Base.size(inds)
@@ -12,8 +12,8 @@ function shglet(𝚽, W, GP; ϵ = 0.3)
     HGLET = zeros(N, jmax, N)
     HGLET[:, 1, :] = 𝚽'
 
-    sHGLET = zeros(N, jmax, N)
-    sHGLET[:, 1, :] = 𝚽'
+    LPHGLET = zeros(N, jmax, N)
+    LPHGLET[:, 1, :] = 𝚽'
     for j = 2:jmax
         regioncount = count(!iszero, rs[:, j]) - 1
         # Uf = unitary_folding_operator(W, GP; ϵ = ϵ, J = j - 1)
@@ -22,10 +22,10 @@ function shglet(𝚽, W, GP; ϵ = 0.3)
             indr = rs[r, j]:(rs[r + 1, j] - 1)
             GP.tag[indr, j] = Vector{Int}(0:(length(indr) - 1))
             HGLET[indr, j, :] = const_hglet_jk(W; idx = inds[indr, j])'
-            sHGLET[indr, j, :] = const_shglet_jk(HGLET[indr, j, :]', Uf; idx = inds[indr, j])'
+            LPHGLET[indr, j, :] = const_lphglet_jk(HGLET[indr, j, :]', Uf; idx = inds[indr, j])'
         end
     end
-    return HGLET, sHGLET
+    return HGLET, LPHGLET
 end
 
 function const_hglet_jk(W; idx = 1:size(Uf, 1))
@@ -40,7 +40,7 @@ end
 
 
 
-function const_shglet_jk(H, Uf; idx = 1:size(Uf, 1))
+function const_lphglet_jk(H, Uf; idx = 1:size(Uf, 1))
     # assemble smooth orthogonal projector
     P = Uf[idx, :]' * Uf[idx, :]
     return P * H
@@ -49,9 +49,9 @@ end
 
 
 """
-    function sHGLET_Synthesis(dvec::Vector{Float64}, GP::GraphPart, BS::BasisSpec, G::GraphSig; method::Symbol = :L, ϵ::Float64 = 0.3)
+    function LPHGLET_Synthesis(dvec::Vector{Float64}, GP::GraphPart, BS::BasisSpec, G::GraphSig; method::Symbol = :L, ϵ::Float64 = 0.3)
 
-Add noise to the data of a GraphSig object
+Perform Lapped-HGLET Synthesis transform
 
 ### Input Arguments
 * `dvec`: the expansion coefficients corresponding to the chosen basis
@@ -65,7 +65,7 @@ Add noise to the data of a GraphSig object
 * `f`: the reconstructed signal
 * `GS`: the reconstructed GraphSig object
 """
-function sHGLET_Synthesis(dvec::Matrix{Float64}, GP::GraphPart, BS::BasisSpec, G::GraphSig; method::Symbol = :L, ϵ::Float64 = 0.3)
+function LPHGLET_Synthesis(dvec::Matrix{Float64}, GP::GraphPart, BS::BasisSpec, G::GraphSig; method::Symbol = :L, ϵ::Float64 = 0.3)
     # Preliminaries
     W = G.W
     inds = GP.inds
@@ -139,9 +139,9 @@ end
 
 
 """
-    function sHGLET_Analysis_All(G::GraphSig, GP::GraphPart; ϵ::Float64 = 0.3)
+    function LPHGLET_Analysis_All(G::GraphSig, GP::GraphPart; ϵ::Float64 = 0.3)
 
-For a GraphSig object 'G', generate the 2 matrices of sHGLET expansion coefficients
+For a GraphSig object 'G', generate the 2 matrices of Lapped-HGLET expansion coefficients
 corresponding to the eigenvectors of L and Lsym
 
 ### Input Arguments
@@ -150,11 +150,11 @@ corresponding to the eigenvectors of L and Lsym
 * `ϵ`: relative action bandwidth (default: 0.3)
 
 ### Output Argument
-* `dmatrixsH`:        the matrix of expansion coefficients for L
-* `dmatrixsHsym`:     the matrix of expansion coefficients for Lsym
+* `dmatrixlH`:        the matrix of expansion coefficients for L
+* `dmatrixlHsym`:     the matrix of expansion coefficients for Lsym
 * `GP`:              a GraphPart object
 """
-function sHGLET_Analysis_All(G::GraphSig, GP::GraphPart; ϵ::Float64 = 0.3)
+function LPHGLET_Analysis_All(G::GraphSig, GP::GraphPart; ϵ::Float64 = 0.3)
     # Preliminaries
     W = G.W
     inds = GP.inds
@@ -164,8 +164,8 @@ function sHGLET_Analysis_All(G::GraphSig, GP::GraphPart; ϵ::Float64 = 0.3)
     fcols = size(G.f, 2)
     Uf = Matrix{Float64}(I, N, N)
     used_node = Set()
-    dmatrixsH = zeros(N, jmax, fcols)
-    dmatrixsHsym = deepcopy(dmatrixsH)
+    dmatrixlH = zeros(N, jmax, fcols)
+    dmatrixlHsym = deepcopy(dmatrixlH)
 
     for j = 1:jmax
         regioncount = count(!iszero, rs[:,j]) - 1
@@ -203,12 +203,12 @@ function sHGLET_Analysis_All(G::GraphSig, GP::GraphPart; ϵ::Float64 = 0.3)
             # construct smooth orthognal projector custom to current region
             P = Uf[indrs, :]' * Uf[indrs, indrs]
             # obtain the expansion coefficients
-            dmatrixsH[indr, j, :] = (P * vec)' * G.f
-            dmatrixsHsym[indr, j, :] = (P * vec_sym)' * G.f
+            dmatrixlH[indr, j, :] = (P * vec)' * G.f
+            dmatrixlHsym[indr, j, :] = (P * vec_sym)' * G.f
         end
     end
 
-    return dmatrixsH, dmatrixsHsym
+    return dmatrixlH, dmatrixlHsym
 
 end
 
@@ -244,13 +244,13 @@ function HGLET_dictionary(GP::GraphPart, G::GraphSig; method::Symbol = :L)
 end
 
 
-function sHGLET_dictionary(GP::GraphPart, G::GraphSig; method::Symbol = :L, ϵ::Float64 = 0.3)
+function LPHGLET_dictionary(GP::GraphPart, G::GraphSig; method::Symbol = :L, ϵ::Float64 = 0.3)
     N = size(G.W, 1)
     jmax = size(GP.rs, 2)
     dictionary = zeros(N, jmax, N)
     for j = 1:jmax
         BS = BasisSpec(collect(enumerate(j * ones(Int, N))))
-        dictionary[:, j, :] = sHGLET_Synthesis(Matrix{Float64}(I, N, N), GP, BS, G; method = method, ϵ = ϵ)[1]'
+        dictionary[:, j, :] = LPHGLET_Synthesis(Matrix{Float64}(I, N, N), GP, BS, G; method = method, ϵ = ϵ)[1]'
     end
     return dictionary
 end

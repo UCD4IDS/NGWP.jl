@@ -97,7 +97,7 @@ function find_pairinds(W; ϵ::Float64 = 0.2, idx = 1:size(W, 1), used_node = Set
     return pair_inds, v
 end
 
-function pair_inds_shadding(W, GP; ϵ = 0.2, J = 1)
+function pair_inds_shadding(W, GP; ϵ = 0.3, J = 1)
     rs = GP.rs
     inds = GP.inds
     (N, jmax) = Base.size(inds)
@@ -129,7 +129,7 @@ end
 
 
 
-function keep_folding!(U, used_node, W, GP; ϵ = 0.2, j = 1)
+function keep_folding!(U, used_node, W, GP; ϵ = 0.3, j = 1)
     if j == 0
         return U
     end
@@ -166,7 +166,7 @@ function keep_folding!(U, used_node, W, GP; ϵ = 0.2, j = 1)
 end
 
 
-function unitary_folding_operator(W, GP; ϵ = 0.2, J = 1)
+function unitary_folding_operator(W, GP; ϵ = 0.3, J = 1)
     rs = GP.rs
     inds = GP.inds
     (N, jmax) = Base.size(inds)
@@ -183,7 +183,7 @@ end
 
 
 
-function meyer_ngwp(𝚽, W_dual, GP_dual; ϵ = 0.2)
+function lp_ngwp(𝚽, W_dual, GP_dual; ϵ = 0.3)
     rs = GP_dual.rs
     inds = GP_dual.inds
     (N, jmax) = Base.size(inds)
