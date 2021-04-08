@@ -5,7 +5,7 @@ pyplot(dpi = 200)
 plot(layout = Plots.grid(3, 7))
 for i in 1:N
     heatmap!(reshape(𝚽[:, i], (Nx, Ny))', c = :viridis, cbar = false,
-                clims = (-0.4,0.4), frame = :none, ratio = 1,
+                clims = (-0.4,0.4), frame = :none, ratio = 1, ylim = [0, Ny + 1],
                 title = latexstring("\\phi_{", i-1, "}"), titlefont = 12,
                 subplot = i)
 end
@@ -16,8 +16,8 @@ savefig(plt, "../figs/grid7x3_evsp_title.png")
 plot(layout = Plots.grid(3, 7))
 for i in 1:N
     k = grid2eig_ind[i]
-    heatmap!(reshape(𝚽[:,k],(Nx,Ny))', c = :viridis, cbar = false,
-                clims = (-0.4,0.4), frame = :none, ratio = 1,
+    heatmap!(reshape(𝚽[:,k], (Nx, Ny))', c = :viridis, cbar = false,
+                clims = (-0.4,0.4), frame = :none, ratio = 1, ylim = [0, Ny + 1],
                 title = latexstring("\\varphi_{", string(eig2dct[k,1]),
                 ",", string(eig2dct[k,2]), "}"), titlefont = 12, subplot = i)
 end
