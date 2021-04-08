@@ -19,6 +19,7 @@ end
 
 export eigDAG_Distance, eigHAD_Distance, eigHAD_Affinity
 export eigROT_Distance, ROT_Distance, eigEMD_Distance
+export eigsROT_Distance
 export eigTSD_Distance, K_functional
 export natural_eigdist
 export SunFlowerGraph, dualgraph
