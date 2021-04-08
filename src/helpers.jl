@@ -487,7 +487,17 @@ function standardize_eigenvectors!(𝚽)
         𝛟max = maximum(𝚽[:, l])
         𝛟min = minimum(𝚽[:, l])
         if abs(𝛟max + 𝛟min) < tol
-            𝚽[:, l] *= (𝚽[1, l] > 0) * 2 - 1
+            row = 1
+            standardized = false
+            while !standardized
+                if 𝚽[row, l] > tol
+                    standardized = true
+                elseif 𝚽[row, col] < -tol
+                    𝚽[:, col] = -𝚽[:, col]
+                else
+                    row += 1
+                end
+            end
         elseif 𝛟max < -𝛟min
             𝚽[:, l] *= -1
         end
