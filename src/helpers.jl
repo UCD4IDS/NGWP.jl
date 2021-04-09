@@ -492,8 +492,8 @@ function standardize_eigenvectors!(𝚽)
             while !standardized
                 if 𝚽[row, l] > tol
                     standardized = true
-                elseif 𝚽[row, col] < -tol
-                    𝚽[:, col] = -𝚽[:, col]
+                elseif 𝚽[row, l] < -tol
+                    𝚽[:, l] = -𝚽[:, l]
                 else
                     row += 1
                 end
