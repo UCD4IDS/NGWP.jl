@@ -503,3 +503,90 @@ function standardize_eigenvectors!(𝚽)
         end
     end
 end
+
+
+function getall_expansioncoeffs2(G_Sig::GraphSig, GP_star::GraphPart,
+                                 GP_star_Lsym::GraphPart,
+                                 VM_NGWP::Array{Float64,3},
+                                 PC_NGWP::Array{Float64,3},
+                                 LP_NGWP::Array{Float64,3},
+                                 VM_NGWP_Lsym::Array{Float64,3},
+                                 PC_NGWP_Lsym::Array{Float64,3},
+                                 LP_NGWP_Lsym::Array{Float64,3},
+                                 𝚽::Matrix{Float64},
+                                 𝚽sym::Matrix{Float64})
+    ############# VM_NGWP
+    dmatrix_VM = ngwp_analysis(G_Sig, VM_NGWP)
+    dvec_vm_ngwp, BS_vm_ngwp = ngwp_bestbasis(dmatrix_VM, GP_star)
+    ############# PC_NGWP
+    dmatrix_PC = ngwp_analysis(G_Sig, PC_NGWP)
+    dvec_pc_ngwp, BS_pc_ngwp = ngwp_bestbasis(dmatrix_PC, GP_star)
+    ############# LP_NGWP
+    dmatrix_LP = ngwp_analysis(G_Sig, LP_NGWP)
+    dvec_lp_ngwp, BS_lp_ngwp = ngwp_bestbasis(dmatrix_LP, GP_star)
+    ############# VM_NGWP_Lsym
+    dmatrix_VM_Lsym = ngwp_analysis(G_Sig, VM_NGWP_Lsym)
+    dvec_vm_ngwp_Lsym, BS_vm_ngwp_Lsym = ngwp_bestbasis(dmatrix_VM_Lsym, GP_star_Lsym)
+    ############# PC_NGWP_Lsym
+    dmatrix_PC_Lsym = ngwp_analysis(G_Sig, PC_NGWP_Lsym)
+    dvec_pc_ngwp_Lsym, BS_pc_ngwp_Lsym = ngwp_bestbasis(dmatrix_PC_Lsym, GP_star_Lsym)
+    ############# LP_NGWP
+    dmatrix_LP_Lsym = ngwp_analysis(G_Sig, LP_NGWP_Lsym)
+    dvec_lp_ngwp_Lsym, BS_lp_ngwp_Lsym = ngwp_bestbasis(dmatrix_LP_Lsym, GP_star_Lsym)
+    ############# Laplacian L
+    dvec_Laplacian = 𝚽' * G_Sig.f
+    ############# Laplacian Lsym
+    dvec_Laplacian_sym = 𝚽sym' * G_Sig.f
+    ############# HGLET
+    GP = partition_tree_fiedler(G_Sig)
+    dmatrixH, _, dmatrixHsym = HGLET_Analysis_All(G_Sig, GP)
+    dvec_hglet, BS_hglet, trans_hglet = HGLET_GHWT_BestBasis(GP, dmatrixH = dmatrixH, dmatrixHsym = dmatrixHsym, costfun = 1)
+    ############# LP-HGLET
+    dmatrixsH, dmatrixsHsym = LPHGLET_Analysis_All(G_Sig, GP; ϵ = 0.3)
+    dvec_lphglet, BS_lphglet, trans_lphglet = HGLET_GHWT_BestBasis(GP, dmatrixH = dmatrixsH, dmatrixHsym = dmatrixsHsym, costfun = 1)
+    ############# GHWT dictionaries
+    dmatrix = ghwt_analysis!(G_Sig, GP = GP)
+    ############# Haar
+    BS_haar = bs_haar(GP)
+    dvec_haar = dmatrix2dvec(dmatrix, GP, BS_haar)
+    ############# Walsh
+    BS_walsh = bs_walsh(GP)
+    dvec_walsh = dmatrix2dvec(dmatrix, GP, BS_walsh)
+    ############# GHWT_c2f
+    dvec_c2f, BS_c2f = ghwt_c2f_bestbasis(dmatrix, GP)
+    ############# GHWT_f2c
+    dvec_f2c, BS_f2c = ghwt_f2c_bestbasis(dmatrix, GP)
+    ############# eGHWT
+    dvec_eghwt, BS_eghwt = ghwt_tf_bestbasis(dmatrix, GP)
+    DVEC = [dvec_Laplacian[:], dvec_Laplacian_sym[:], dvec_hglet[:], dvec_lphglet[:],
+            dvec_haar[:], dvec_walsh[:], dvec_c2f[:], dvec_f2c[:], dvec_eghwt[:],
+            dvec_pc_ngwp[:], dvec_pc_ngwp_Lsym[:],
+            dvec_vm_ngwp[:], dvec_vm_ngwp_Lsym[:],
+            dvec_lp_ngwp[:], dvec_lp_ngwp_Lsym[:]]
+    return DVEC
+end
+
+function approx_error_plot2(DVEC::Vector{Vector{Float64}}; frac::Float64 = 0.50)
+    plot(xaxis = "Fraction of Coefficients Retained",
+            yaxis = "Relative Approximation Error", size = (600, 500))
+    T = ["eigenbasis-L", "eigenbasis-Lsym", "HGLET", "LP-HGLET", "Haar", "Walsh",
+         "GHWT_c2f", "GHWT_f2c", "eGHWT", "PC-NGWP", "PC-NGWP-Lsym",
+         "VM-NGWP", "VM-NGWP-Lsym", "LP-NGWP", "LP-NGWP-Lsym"]
+    L = [(:dot, :red), (:dot, :magenta), (:solid, :teal), (:dashdot, :teal),
+         (:dashdot, :orange), (:dashdot, :pink), (:solid, :gray),
+         (:solid, :green), (:solid, :blue), (:solid, :purple), (:dash, :purple),
+         (:solid, :black), (:dash, :black), (:solid, :orange), (:dash, :orange)]
+    for i = 1:length(DVEC)
+        if i in [5, 6, 7, 8]
+            continue
+        end
+        dvec = DVEC[i]
+        N = length(dvec)
+        dvec_norm = norm(dvec,2)
+        dvec_sort = sort(dvec.^2) # the smallest first
+        er = max.(sqrt.(reverse(cumsum(dvec_sort)))/dvec_norm, 1e-12)
+        p = Int64(floor(frac*N)) + 1 # upper limit
+        plot!(frac*(0:(p-1))/(p-1), er[1:p], yaxis=:log, xlims = (0.,frac),
+                label = T[i], line = L[i], linewidth = 2, grid = false)
+    end
+end
