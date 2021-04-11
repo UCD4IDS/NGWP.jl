@@ -1,4 +1,4 @@
-using NGWP, LightGraphs, MTSG, Plots
+using NGWP, LightGraphs, MTSG, Plots, LaTeXStrings
 
 ## Build Graph
 N = 128; G = path_graph(N)
@@ -33,3 +33,32 @@ end
 
 P0 = Uf' * diagm(χ(1:64, N)) * Uf
 P1 = Uf' * diagm(χ(65:N, N)) * Uf
+
+
+##
+distDCT = zeros(N,N)
+for i in 1:N-1, j = i+1:N
+    distDCT[i,j] = abs(i-j)
+end
+distDCT = distDCT + distDCT'
+
+
+function path_spectrogram(f, D, 𝚽; c = 0.01)
+    N = length(f)
+    dmatrix = zeros(N, N)
+    for l = 1:N
+        P = 𝚽 * diagm(nat_spec_filter(l, D; σ = c * maximum(D))) * 𝚽'
+        for x = 1:N
+            ψ = P * spike(x, N)
+            ψ ./= norm(ψ, 2)
+            dmatrix[l, x] = ψ' * f
+        end
+    end
+    heatmap(abs.(dmatrix), c = :thermal, ratio = 1, xlim = [0.5, N+1],
+            ylim = [0.5, N], xlab = latexstring("x"), ylab = latexstring("l"),
+            guidefontsize = 18)
+    xticks!([16:16:128;], [string(k) for k in 16:16:128])
+    yticks!([1;16:16:128], vcat("DC", [string(k) for k in 15:16:127]))
+    plt = plot!(size = (500, 400))
+    return plt
+end

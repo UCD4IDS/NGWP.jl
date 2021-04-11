@@ -1,5 +1,7 @@
-using NGWP, MTSG, JLD, Plots, LightGraphs, MultivariateStats; pyplot(dpi = 200)
+using NGWP, MTSG, JLD, Plots, LightGraphs, MultivariateStats
 using LaTeXStrings
+push!(LOAD_PATH, @__DIR__)
+using pSGWT
 
 G = loadgraph("../datasets/simple_tree_graph.lgz")
 X = load("../datasets/simple_tree_xy.jld", "xy")
@@ -55,3 +57,12 @@ function simpletree_mds_plot(E, ieb1, ieb2, ieb3, ieb4, iejc)
                 cbar = false, grid = true)
     return plt
 end
+
+##
+f = zeros(N)
+ib1 = 36:56; ib2 = 21:35; ib3 = 71:100; ib4 = 57:70; ijc = [3,5,12,16]
+f[ib1] = sin.(0.3 * (0:(length(ib1) - 1)))
+f[ib2] = cos.(0.4 * (0:(length(ib2) - 1)))
+f[ib3] = sin.(0.5 * (0:(length(ib3) - 1)))
+f[ib4] = cos.(0.6 * (0:(length(ib4) - 1)))
+f[ijc] .= 1;
