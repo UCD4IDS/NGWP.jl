@@ -24,4 +24,5 @@ See [`test/paperscript`](https://github.com/haotian127/NGWP.jl/tree/master/test/
 
 ## REFERENCE
 
-C. Alexander, H. Li and N. Saito, [Natural Graph Wavelet Packet Dictionaries](https://arxiv.org/abs/2009.09020).
+1. H. Li and N. Saito, [Metrics of graph Laplacian eigenvectors](https://www.math.ucdavis.edu/~saito/publications/metgraphlap.html), in Wavelets and Sparsity XVIII (D. Van De Ville, M. Papadakis, and Y. M. Lu, eds.), Proc. SPIE 11138, Paper #111381K, 2019.
+2. C. Alexander, H. Li and N. Saito, [Natural Graph Wavelet Packet Dictionaries](https://arxiv.org/abs/2009.09020), 2021.
