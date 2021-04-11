@@ -1,4 +1,5 @@
 cd(@__DIR__); include("setups/simpletree.jl");
+pyplot(dpi = 200)
 
 ## (a)
 println("l = $(ieb1[end] - 1) and λₗ = $(𝛌[ieb1[end] - 1])")

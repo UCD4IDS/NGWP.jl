@@ -1,4 +1,5 @@
 cd(@__DIR__); include("setups/simpletree.jl");
+gr(dpi=200)
 
 for l = 97:100
     plot(size = (200, 500), framestyle = :none)
