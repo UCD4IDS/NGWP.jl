@@ -20,7 +20,7 @@ using NGWP
 
 ## EXAMPLE
 
-See [`test/paperscript`](https://github.com/haotian127/NGWP.jl/tree/master/test/paperscript).
+See [`test/paperscript`](https://github.com/haotian127/NGWP.jl/tree/master/test/paperscript) and [`dissertation/scripts`](https://github.com/haotian127/NGWP.jl/tree/master/dissertation/scripts).
 
 ## REFERENCE
 
