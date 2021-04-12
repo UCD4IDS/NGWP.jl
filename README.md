@@ -1,4 +1,4 @@
-# NGWP
+# NGWP.jl
 
 <!-- [![Build Status](https://travis-ci.com/haotian127/NGWP.jl.svg?branch=master)](https://travis-ci.com/haotian127/NGWP.jl)
 [![Build Status](https://ci.appveyor.com/api/projects/status/github/haotian127/NGWP.jl?svg=true)](https://ci.appveyor.com/project/haotian127/NGWP-jl)
