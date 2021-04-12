@@ -109,7 +109,7 @@ construct pair-clustering NGWP and GP.tag in place.
 # Input Arguments
 - `𝚽::Matrix{Float64}`: graph Laplacian eigenvectors 𝚽
 - `GP_star::GraphPart`: GraphPart object of the dual graph
-- `GP_star::GraphPart`: GraphPart object of the primal graph
+- `GP::GraphPart`: GraphPart object of the primal graph
 
 # Output Argument
 - `wavelet_packet::Array{Float64,3}`: the pair-clustering NGWP. The first
