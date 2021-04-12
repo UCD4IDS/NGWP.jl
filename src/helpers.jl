@@ -479,8 +479,18 @@ function sort_wavelets(A; onlyByLoc = false)
     return A
 end
 
+"""
+    standardize_eigenvectors!(𝚽::Matrix{Float64})
 
-function standardize_eigenvectors!(𝚽)
+standardize the signs of the eigenvectors such that 1) the term with the largest
+magnitude is positive; 2) if the max == -min, then make sure the first non-zero
+entry of the eigenvector is positive.
+
+# Input Arguments
+- `𝚽::Matrix{Float64}`: matrix of graph Laplacian eigenvectors
+
+"""
+function standardize_eigenvectors!(𝚽::Matrix{Float64})
     N, nev = size(𝚽)
     tol = 10^3 * eps()
     for l in 1:nev
@@ -505,6 +515,34 @@ function standardize_eigenvectors!(𝚽)
 end
 
 
+"""
+getall_expansioncoeffs2(G_Sig::GraphSig, GP_star::GraphPart,
+                                 GP_star_Lsym::GraphPart,
+                                 VM_NGWP::Array{Float64,3},
+                                 PC_NGWP::Array{Float64,3},
+                                 LP_NGWP::Array{Float64,3},
+                                 VM_NGWP_Lsym::Array{Float64,3},
+                                 PC_NGWP_Lsym::Array{Float64,3},
+                                 LP_NGWP_Lsym::Array{Float64,3},
+                                 𝚽::Matrix{Float64},
+                                 𝚽sym::Matrix{Float64})
+
+get all expansion coefficients of `f` in dissertation via all methods in NGWP.jl
+and MTSG.jl
+
+# Input Arguments
+- `G_Sig::GraphSig`: GraphSig of the primal graph
+- `GP_star::GraphPart`: GraphPart of the dual graph
+- `VM_NGWP::Array{Float64,3}`: varimax NGWP.
+- `PC_NGWP::Array{Float64,3}`: pair-clustering NGWP.
+- `LP_NGWP::Array{Float64,3}`: lapped NGWP.
+- `VM_NGWP_Lsym::Array{Float64,3}`: Lsym version of varimax NGWP.
+- `PC_NGWP_Lsym::Array{Float64,3}`: Lsym version of pair-clustering NGWP.
+- `LP_NGWP_Lsym::Array{Float64,3}`: Lsym version of lapped NGWP.
+- `𝚽::Matrix{Float64}`: the matrix of `L` eigenvectors.
+- `𝚽sym::Matrix{Float64}`: the matrix of `Lsym` eigenvectors.
+
+"""
 function getall_expansioncoeffs2(G_Sig::GraphSig, GP_star::GraphPart,
                                  GP_star_Lsym::GraphPart,
                                  VM_NGWP::Array{Float64,3},
@@ -566,6 +604,17 @@ function getall_expansioncoeffs2(G_Sig::GraphSig, GP_star::GraphPart,
     return DVEC
 end
 
+"""
+    approx_error_plot2(DVEC::Vector{Vector{Float64}}; frac::Float64 = 0.50)
+
+draw relative approx. error w.r.t. fraction of coefficients retained (FCR)
+in dissertation
+
+# Input Arguments
+- `DVEC::Vector{Vector{Float64}}`: a list of expansion coefficients.
+- `fraction::Float64`: default is 0.5.
+
+"""
 function approx_error_plot2(DVEC::Vector{Vector{Float64}}; frac::Float64 = 0.50)
     plot(xaxis = "Fraction of Coefficients Retained",
             yaxis = "Relative Approximation Error", size = (600, 500))
