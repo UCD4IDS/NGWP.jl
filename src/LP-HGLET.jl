@@ -1,53 +1,3 @@
-function lphglet(𝚽, W, GP; ϵ = 0.3)
-    rs = GP.rs
-    inds = GP.inds
-    (N, jmax) = Base.size(inds)
-
-    GP.tag = zeros(Int, N, jmax)
-    GP.tag[:, 1] = Vector{Int}(0:(N - 1))
-
-    Uf = Matrix{Float64}(I, N, N)
-    used_node = Set()
-
-    HGLET = zeros(N, jmax, N)
-    HGLET[:, 1, :] = 𝚽'
-
-    LPHGLET = zeros(N, jmax, N)
-    LPHGLET[:, 1, :] = 𝚽'
-    for j = 2:jmax
-        regioncount = count(!iszero, rs[:, j]) - 1
-        # Uf = unitary_folding_operator(W, GP; ϵ = ϵ, J = j - 1)
-        keep_folding!(Uf, used_node, W, GP; ϵ = ϵ, j = j - 1)
-        for r = 1:regioncount
-            indr = rs[r, j]:(rs[r + 1, j] - 1)
-            GP.tag[indr, j] = Vector{Int}(0:(length(indr) - 1))
-            HGLET[indr, j, :] = const_hglet_jk(W; idx = inds[indr, j])'
-            LPHGLET[indr, j, :] = const_lphglet_jk(HGLET[indr, j, :]', Uf; idx = inds[indr, j])'
-        end
-    end
-    return HGLET, LPHGLET
-end
-
-function const_hglet_jk(W; idx = 1:size(Uf, 1))
-    N = size(W, 1)
-    Ljk = diagm(sum(W[idx, idx], dims = 1)[:]) - W[idx, idx]
-    𝚽barjk = eigen(Matrix(Ljk)).vectors
-    standardize_eigenvectors!(𝚽barjk)
-    𝚽jk = zeros(N, length(idx))
-    𝚽jk[idx, :] = 𝚽barjk
-    return 𝚽jk
-end
-
-
-
-function const_lphglet_jk(H, Uf; idx = 1:size(Uf, 1))
-    # assemble smooth orthogonal projector
-    P = Uf[idx, :]' * Uf[idx, :]
-    return P * H
-end
-
-
-
 """
     function LPHGLET_Synthesis(dvec::Vector{Float64}, GP::GraphPart, BS::BasisSpec, G::GraphSig; method::Symbol = :L, ϵ::Float64 = 0.3)
 
@@ -215,7 +165,7 @@ end
 
 
 function standardize_eigenvector_signs!(vec)
-    # standardize the eigenvector signs
+    # standardize the eigenvector signs for HGLET (different with NGWPs)
     for col = 1:size(vec, 2)
         row = 1
         standardized = false
@@ -231,7 +181,20 @@ function standardize_eigenvector_signs!(vec)
     end
 end
 
+"""
+    HGLET_dictionary(GP::GraphPart, G::GraphSig; method::Symbol = :L)
 
+assemble the whole HGLET dictionary
+
+### Input Arguments
+* `GP`: a GraphPart object
+* `G`:  a GraphSig object
+* `method`: `:L` or `:Lsym`
+
+### Output Argument
+* `dictionary`: the HGLET dictionary
+
+"""
 function HGLET_dictionary(GP::GraphPart, G::GraphSig; method::Symbol = :L)
     N = size(G.W, 1)
     jmax = size(GP.rs, 2)
@@ -243,7 +206,21 @@ function HGLET_dictionary(GP::GraphPart, G::GraphSig; method::Symbol = :L)
     return dictionary
 end
 
+"""
+    LPHGLET_dictionary(GP::GraphPart, G::GraphSig; method::Symbol = :L, ϵ::Float64 = 0.3)
 
+assemble the whole LP-HGLET dictionary
+
+### Input Arguments
+* `GP`: a GraphPart object
+* `G`:  a GraphSig object
+* `method`: `:L` or `:Lsym`
+* `ϵ`: relative action bandwidth (default: 0.3)
+
+### Output Argument
+* `dictionary`: the LP-HGLET dictionary
+
+"""
 function LPHGLET_dictionary(GP::GraphPart, G::GraphSig; method::Symbol = :L, ϵ::Float64 = 0.3)
     N = size(G.W, 1)
     jmax = size(GP.rs, 2)
