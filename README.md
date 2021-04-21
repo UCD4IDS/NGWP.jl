@@ -12,15 +12,15 @@ This is the repository for the [Natural Graph Wavelet Packet Dictionaries](https
 To install the NGWP.jl (Natural Graph Wavelet Packets), run
 ```julia
 ]
-(@v1.6) pkg> add https://gitlab.com/BoundaryValueProblems/MTSG.jl.git
-(@v1.6) pkg> add https://github.com/haotian127/NGWP.jl.git
+(@v1.6) pkg> add https://gitlab.com/UCD4IDS/MTSG.jl.git
+(@v1.6) pkg> add https://github.com/UCD4IDS/NGWP.jl.git
 (@v1.6) pkg> test NGWP
 using NGWP
 ```
 
 ## EXAMPLE
 
-See [`test/paperscript`](https://github.com/haotian127/NGWP.jl/tree/master/test/paperscript) and [`dissertation/scripts`](https://github.com/haotian127/NGWP.jl/tree/master/dissertation/scripts).
+See [`test/paperscript`](https://github.com/UCD4IDS/NGWP.jl/tree/master/test/paperscript) and [`dissertation/scripts`](https://github.com/UCD4IDS/NGWP.jl/tree/master/dissertation/scripts).
 
 ## REFERENCES
 
