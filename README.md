@@ -20,7 +20,7 @@ To install the NGWP.jl (Natural Graph Wavelet Packets), run
 using NGWP
 ``` -->
 
-## EXAMPLE
+## EXAMPLES
 
 * The scripts for reproducing the figures in [2] can be found at `MultiscaleGraphSignalTransforms/test/paperscripts/NGWP_JFAA2021/scripts`.
 * The scripts for reproducing the figures in [3] can be found at `MultiscaleGraphSignalTransforms/test/dissertations/htli/scripts`.
