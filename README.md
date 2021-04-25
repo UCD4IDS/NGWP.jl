@@ -29,4 +29,4 @@ using NGWP
 
 1. H. Li and N. Saito, [Metrics of graph Laplacian eigenvectors](https://www.math.ucdavis.edu/~saito/publications/metgraphlap.html), in Wavelets and Sparsity XVIII (D. Van De Ville, M. Papadakis, and Y. M. Lu, eds.), Proc. SPIE 11138, Paper #111381K, 2019.
 2. C. Alexander, H. Li and N. Saito, [Natural graph wavelet packet dictionaries](https://link.springer.com/article/10.1007/s00041-021-09832-3), J. Fourier Anal. Appl., vol. 27, Article \#41, 2021.
-3. H. Li, Natural Graph Wavelet Dictionaries: Methods and Applications, Ph.D. dissertation, University of California, Davis, May. 2021.
+3. H. Li, Natural Graph Wavelet Dictionaries: Methods and Applications, Ph.D. dissertation, University of California, Davis, 2021.
