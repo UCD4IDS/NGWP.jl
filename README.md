@@ -1,6 +1,7 @@
 # NGWP.jl
 
-**WARNING**: `NGWP.jl` is deprecated and will be a part of [`MultiscaleGraphSignalTransforms.jl`](https://github.com/UCD4IDS/MultiscaleGraphSignalTransforms.jl) from April 26, 2021.
+**WARNING**: This package is now merged into [`MultiscaleGraphSignalTransforms.jl`](https://github.com/UCD4IDS/MultiscaleGraphSignalTransforms.jl), and will not be maintained anymore.
+Please use the [`MultiscaleGraphSignalTransforms.jl`](https://github.com/UCD4IDS/MultiscaleGraphSignalTransforms.jl) from now on.
 
 
 <!-- [![Build Status](https://travis-ci.com/haotian127/NGWP.jl.svg?branch=master)](https://travis-ci.com/haotian127/NGWP.jl)
