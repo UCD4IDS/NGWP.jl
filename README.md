@@ -23,8 +23,8 @@ using NGWP
 
 ## EXAMPLES
 
-* The scripts for reproducing the figures in [2] can be found at `MultiscaleGraphSignalTransforms/test/paperscripts/NGWP_JFAA2021/scripts`.
-* The scripts for reproducing the figures in [3] can be found at `MultiscaleGraphSignalTransforms/test/dissertations/htli/scripts`.
+* The scripts for reproducing the figures in [2] can be found at `UCD4IDS/MultiscaleGraphSignalTransforms.jl/test/paperscripts/NGWP_JFAA2021/scripts`.
+* The scripts for reproducing the figures in [3] can be found at `UCD4IDS/MultiscaleGraphSignalTransforms.jl/test/dissertations/htli/scripts`.
 
 ## REFERENCES
 
