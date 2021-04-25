@@ -1,3 +1,5 @@
+**WARNING**: `NGWP.jl` is deprecated and will be a part of [`MultiscaleGraphSignalTransforms.jl`](https://github.com/UCD4IDS/MultiscaleGraphSignalTransforms.jl) from April 26, 2021.
+
 # NGWP.jl
 
 <!-- [![Build Status](https://travis-ci.com/haotian127/NGWP.jl.svg?branch=master)](https://travis-ci.com/haotian127/NGWP.jl)
@@ -5,9 +7,7 @@
 [![Coverage](https://codecov.io/gh/haotian127/NGWP.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/haotian127/NGWP.jl)
 [![Coverage](https://coveralls.io/repos/github/haotian127/NGWP.jl/badge.svg?branch=master)](https://coveralls.io/github/haotian127/NGWP.jl?branch=master) -->
 
-**WARNING**: `NGWP.jl` is deprecated and has become a part of [`MultiscaleGraphSignalTransforms.jl`](https://github.com/UCD4IDS/MultiscaleGraphSignalTransforms.jl) since April 24, 2021.
-
-NGWP.jl is the repository for the [Natural Graph Wavelet Packet Dictionaries](https://link.springer.com/article/10.1007/s00041-021-09832-3).
+`NGWP.jl` is the repository for the [Natural Graph Wavelet Packet Dictionaries](https://link.springer.com/article/10.1007/s00041-021-09832-3).
 
 <!-- ## SETUP
 
