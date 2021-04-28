@@ -24,8 +24,8 @@ using NGWP
 
 ## EXAMPLES
 
-* The scripts for reproducing the figures in [2] can be found at `UCD4IDS/MultiscaleGraphSignalTransforms.jl/test/paperscripts/NGWP_JFAA2021/scripts`.
-* The scripts for reproducing the figures in [3] can be found at `UCD4IDS/MultiscaleGraphSignalTransforms.jl/test/dissertations/htli/scripts`.
+* The scripts for reproducing the figures of [2] can be found at `UCD4IDS/MultiscaleGraphSignalTransforms.jl/test/paperscripts/NGWP_JFAA2021/scripts`.
+* The scripts for reproducing the figures of [3] can be found at `UCD4IDS/MultiscaleGraphSignalTransforms.jl/test/dissertations/htli/scripts`.
 
 ## REFERENCES
 
@@ -33,4 +33,4 @@ using NGWP
 
 2. C. Alexander, H. Li and N. Saito, [Natural graph wavelet packet dictionaries](https://link.springer.com/article/10.1007/s00041-021-09832-3), *J. Fourier Anal. Appl.*, vol. 27, Article \#41, 2021.
 
-3. H. Li, Natural Graph Wavelet Dictionaries: Methods and Applications, Ph.D. dissertation, University of California, Davis, 2021.
+3. H. Li, Natural Graph Wavelet Dictionaries: Methods and Applications, Ph.D. dissertation, University of California, Davis, Jun. 2021.
