@@ -24,8 +24,8 @@ using NGWP
 
 ## EXAMPLES
 
-* The scripts for reproducing the figures of [2] can be found at `UCD4IDS/MultiscaleGraphSignalTransforms.jl/test/paperscripts/NGWP_JFAA2021/scripts`.
-* The scripts for reproducing the figures of [3] can be found at `UCD4IDS/MultiscaleGraphSignalTransforms.jl/test/dissertations/htli/scripts`.
+* The scripts for reproducing the figures of [2] can be found at [`UCD4IDS/MultiscaleGraphSignalTransforms.jl/test/paperscripts/NGWP_JFAA2021/scripts`](https://github.com/UCD4IDS/MultiscaleGraphSignalTransforms.jl/tree/master/test/paperscripts/NGWP_JFAA2021/scripts).
+* The scripts for reproducing the figures of [3] can be found at [`UCD4IDS/MultiscaleGraphSignalTransforms.jl/test/dissertations/htli/scripts`](https://github.com/UCD4IDS/MultiscaleGraphSignalTransforms.jl/tree/master/test/dissertations/htli/scripts).
 
 ## REFERENCES
 
